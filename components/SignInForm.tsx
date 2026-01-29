@@ -2,56 +2,100 @@
 
 import React, { useActionState, useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { LucideGithub, Loader2 } from "lucide-react";
+import { Loader2, CheckCircle, AppleIcon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { signInSchema } from "@/lib/validation/auth";
-import z from "zod";
-import { redirect } from "next/navigation";
+import { z } from "zod";
+// import { redirect } from "next/navigation";
+import { loginUser } from "@/lib/auth";
+import { useRouter } from "next/navigation";
+
+type FormValues = {
+  email: string;
+  password: string
+};
+
+type FormErrors = Partial<Record<keyof FormValues, string>>;
+
+type SignInState = { error: string; status: string } | { formError: string };
 
 export default function SignInPage() {
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [values, setValues] = useState<FormValues>({
+    email: "",
+    password: "",
+  })
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<keyof FormValues, boolean>>({
+    email: false,
+    password: false,
+  })
+  const router = useRouter();
 
-  type SignInState =
-  | { error: string; status: string }
-  | { formError: string };
+  useEffect(() => {
+    if(Object.keys(errors).length > 0){
+      const timer = setTimeout(() => setErrors({}), 4000);
+      return () => clearTimeout(timer)
+    }
+  }, [errors])
+
+  const validateField = (field: keyof FormValues, value: string) => {
+    const newValues = { ...values, [field]: value };
+    setValues(newValues);
+    setTouched((prev) => ({ ...prev, [field]: true }));
+
+    const fieldSchema = signInSchema.shape[field];
+    const result = fieldSchema.safeParse(value);
+
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      if(!result.success){
+        newErrors[field] = result.error.issues[0].message;
+      } else{
+        delete newErrors[field];
+      }
+      return newErrors;
+    })
+  }
 
 
   const signInAction = async (
     prevState: SignInState | undefined,
     formData: FormData
-  ) => {
+  ): Promise<SignInState> => {
     try {
-      const values = {
-        email: formData.get("email") as string,
-        password: formData.get("password") as string,
-      };
-
       signInSchema.parse(values);
 
-      const res = await signIn("credentials", {
-        email: values.email,
-        password: values.password,
-        redirect: false,
-      });
-      if(!res?.ok){
-        return { formError: res?.error || 'Invalid credentials'}
+      const res = await loginUser(values)
+
+      if(!res?.success) {
+        return { formError: res?.message || "Login failed" }
       }
-
       toast.success("Login successful");
-      redirect('/auth/signin')
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldErrors = error.flatten().fieldErrors;
-        setErrors(fieldErrors as unknown as Record<string, string>);
 
+      setValues({
+        email: "",
+        password: "",
+      });
+      setTouched({
+        email: false,
+        password: false,
+      });
+
+      router.push('/');
+      
+      return { formError: "" };
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        const fieldErrors = error.flatten().fieldErrors as FormErrors;
+        setErrors(fieldErrors);
         toast.error("Please fix the errors in the form.");
         return { ...prevState, error: "Validation failed", status: "ERROR" };
       }
 
       return {
-        formError: "Invalid email or password",
+        formError: error.message || "Invalid email or password",
       };
     }
   };
@@ -60,11 +104,30 @@ export default function SignInPage() {
     status: "INITIAL",
   });
 
-  useEffect(() => {
-  if (state?.formError) {
-    toast.error(state.formError);
-  }
-}, [state?.formError]);
+
+  const renderInput = (
+    field: keyof FormValues,
+    placeholder: string,
+    type: string = "text"
+  ) => (
+    <div className="relative">
+      {touched[field] && values[field] && !errors[field] && (
+        <CheckCircle className="text-green-500 absolute right-3 top-3 h-5 w-5" />
+      )}
+      <input
+        name={field}
+        type={type}
+        value={values[field]}
+        onChange={(e) => validateField(field, e.target.value)}
+        onBlur={() => setTouched((prev) => ({ ...prev, [field]:true }))}
+        placeholder={placeholder}
+        className="w-full rounded-lg border border-stone-200 px-4 py-2"   
+      />
+      {errors[field] && (
+        <p className="text-red-600 font-medium">{errors[field]}</p>
+      )}
+    </div>
+  );
 
 
   return (
@@ -91,7 +154,7 @@ export default function SignInPage() {
           onClick={() => signIn("github", { callbackUrl: "/" })}
           className="mt-2 w-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center gap-3 rounded-lg py-3 font-medium transition"
         >
-          <LucideGithub size={22} />
+          <AppleIcon size={22} />
           Continue with GitHub
         </button>
 
@@ -104,37 +167,12 @@ export default function SignInPage() {
 
         {/* Email / Password */}
         <form action={formAction} className="space-y-4">
-          <div>
-            <label className="text-sm text-gray-600">Email</label>
-            <input
-              name="email"
-              type="email"
-              required
-              placeholder="you@example.com"
-              className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-black outline-none"
-            />
-            {errors.email && (
-              <p className="text-red-600 font-medium">{errors.email}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-600">Password</label>
-            <input
-              name="password"
-              type="password"
-              required
-              placeholder="••••••••"
-              className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-black outline-none"
-            />
-            {errors.password && (
-              <p className="text-red-600 font-medium">{errors.password}</p>
-            )}
-          </div>
+          {renderInput("email", "Full Name") } 
+          {renderInput("password", "Password", "password") } 
 
           {/* Error */}
-          {errors.formError && (
-            <p className="text-red-600 font-medium">{errors.formError}</p>
+          {state.formError && (
+            <p className="text-red-600 font-medium">{state.formError}</p>
           )}
 
           <button

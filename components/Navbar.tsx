@@ -5,10 +5,10 @@ import React, { useEffect, useRef, useState } from "react";
 import logo from "../assets/logo2.png";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { toast } from "sonner";
 
@@ -138,7 +138,6 @@ const Navbar = () => {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [openDropDown, setOpenDropDown] = useState<string | null>(null);
-  const { data: session, status } = useSession();
   const pathname = usePathname();
 
   const profileRef = useRef<HTMLDivElement | null>(null);
@@ -160,8 +159,8 @@ const Navbar = () => {
     };
   }, []);
 
-  const handleMouseEnter = (name: string) => setOpenDropDown(name);
-  const handleMouseLeave = () => setOpenDropDown(null);
+  // const handleMouseEnter = (name: string) => setOpenDropDown(name);
+  // const handleMouseLeave = () => setOpenDropDown(null);
 
   const getInitials = (name = "") => {
     const parts = name.trim().split(" ");
@@ -170,7 +169,6 @@ const Navbar = () => {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
-  const initials = getInitials(session?.user?.name ?? "");
 
   const isActive = (href: string) =>
     pathname === href || pathname?.startsWith(href + "/");
@@ -258,24 +256,22 @@ const Navbar = () => {
               .slice(0, 5)}
           </div>
 
-          {!session ? (
             <Link
               href="/auth/signin"
               className="hidden md:flex bg-primary text-white px-4 py-2 rounded-lg"
             >
               Login
             </Link>
-          ) : (
             <div className="relative" ref={profileRef}>
-              <button onClick={() => setOpenDropDown("profile")}>
+              {/* <button onClick={() => setOpenDropDown("profile")}>
                 <Avatar className="">
                   <AvatarImage
-                    src={session?.user?.image || ""}
+                    src={session?.user?.image ||  ""}
                     alt={`${initials || ""}`}
                   />
                   <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
-              </button>
+              </button> */}
 
               <AnimatePresence>
                 {openDropDown === "profile" && (
@@ -307,7 +303,6 @@ const Navbar = () => {
                 )}
               </AnimatePresence>
             </div>
-          )}
 
           {/* Mobile Hamburger */}
           <button
@@ -350,7 +345,7 @@ const Navbar = () => {
           >
             <div className="flex flex-col px-4 py-4 gap-2">
               <div className="px-3 py-2">
-                <Link href="/login-signup">Login</Link>
+                <Link href="/auth/signin">Login</Link>
               </div>
               {navLinks.map((link) => (
                 <div key={link.name} className="flex flex-col">

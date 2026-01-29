@@ -1,63 +1,125 @@
 "use client";
 
-import React, { useActionState, useState } from "react";
+import React, { useState, useEffect, useActionState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { LucideGithub, Loader2 } from "lucide-react";
+import { LucideGithub, Loader2, CheckCircle, AppleIcon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { signUpSchema } from "@/lib/validation/auth";
 import { toast } from "sonner";
-import z from "zod";
-import { redirect } from "next/navigation";
+import { z } from "zod";
+import { registerUser } from "@/lib/auth";
+import { useRouter } from "next/navigation";
+
+type FormValues = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
+type FormErrors = Partial<Record<keyof FormValues, string>>;
+
+type SignInState = { error: string; status: string } | { formError: string };
 
 export default function SignUpPage() {
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [values, setValues] = useState<FormValues>({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  type SignInState =
-  | { error: string; status: string }
-  | { formError: string };
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<keyof FormValues, boolean>>({
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
+  const router = useRouter();
 
+  // Auto-clear errors after 4 seconds
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      const timer = setTimeout(() => setErrors({}), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [errors]);
+
+  // Field-level validation
+  const validateField = (field: keyof FormValues, value: string) => {
+    const newValues = { ...values, [field]: value };
+    setValues(newValues);
+    setTouched((prev) => ({ ...prev, [field]: true }));
+
+    // Handle confirmPassword separately
+    if (field === "confirmPassword") {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword:
+          value !== newValues.password ? "Passwords do not match" : undefined,
+      }));
+      return;
+    }
+
+    // Validate single field using Zod
+    const fieldSchema = signUpSchema.shape[field];
+    const result = fieldSchema.safeParse(value);
+
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      if (!result.success) {
+        newErrors[field] = result.error.issues[0].message;
+      } else {
+        delete newErrors[field];
+      }
+      return newErrors;
+    });
+  };
+
+  // Form submission
   const signUpAction = async (
     prevState: SignInState | undefined,
-    formData: FormData
-  ) => {
+  ): Promise<SignInState> => {
     try {
-      const values = {
-        name: String(formData.get("name")) as string,
-        email: String(formData.get("email")) as string,
-        password: String(formData.get("password")) as string,
-        confirmPassword: String(formData.get("confirmPassword")) as string,
-      };
-
+      // Validate entire form on submit
       signUpSchema.parse(values);
 
-      const res = await fetch(`/api/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      const res = await registerUser(values);
 
-      if (res.status === 409) {
-        return { formError: "Account already exists" };
-      }
-
-      if (!res.ok) {
-        return { formError: "Failed to create account" };
+      if (!res?.success) {
+        return { formError: res?.message || "Failed to create account" };
       }
 
       toast.success("User account has been created successfully");
-      redirect("/auth/signup");
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldErrors = error.flatten().fieldErrors;
-        setErrors(fieldErrors as unknown as Record<string, string>);
-        toast.error("Please fix the errors in the form.");
 
+      // Reset form (optional)
+      setValues({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+      setTouched({
+        name: false,
+        email: false,
+        password: false,
+        confirmPassword: false,
+      });
+
+      router.push("/auth/signin");
+      
+      return { formError: "" };
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        const fieldErrors = error.flatten().fieldErrors as FormErrors;
+        setErrors(fieldErrors);
+        toast.error("Please fix the errors in the form.");
         return { ...prevState, error: "Validation failed", status: "ERROR" };
       }
-    //   return { ...prevState, error: 'An unexpected error occurred', status: 'ERROR'}
 
-      return { formError: "An unexpected error occurred" };
+      return { formError: error.message || "An unexpected error occurred" };
     }
   };
 
@@ -65,6 +127,31 @@ export default function SignUpPage() {
     error: "",
     status: "INITIAL",
   });
+
+  // Render input with tick and error
+  const renderInput = (
+    field: keyof FormValues,
+    placeholder: string,
+    type: string = "text"
+  ) => (
+    <div className="relative">
+      {touched[field] && values[field] && !errors[field] && (
+        <CheckCircle className="text-green-500 absolute right-3 top-3 h-5 w-5" />
+      )}
+      <input
+        name={field}
+        type={type}
+        value={values[field]}
+        onChange={(e) => validateField(field, e.target.value)}
+        onBlur={() => setTouched((prev) => ({ ...prev, [field]: true }))}
+        placeholder={placeholder}
+        className="w-full rounded-lg border border-stone-200 px-4 py-2"
+      />
+      {errors[field] && (
+        <p className="text-red-600 font-medium">{errors[field]}</p>
+      )}
+    </div>
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -74,9 +161,7 @@ export default function SignUpPage() {
           <h1 className="text-2xl font-bold text-gray-900">
             Create your account 🚀
           </h1>
-          <p className="text-gray-500 mt-1">
-            Join us and get started in minutes
-          </p>
+          <p className="text-gray-500 mt-1">Join us and get started in minutes</p>
         </div>
 
         {/* OAuth */}
@@ -92,8 +177,8 @@ export default function SignUpPage() {
           onClick={() => signIn("github", { callbackUrl: "/" })}
           className="mt-2 w-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center gap-3 rounded-lg py-3 font-medium transition"
         >
-          <LucideGithub size={22} />
-          Sign up with GitHub
+          <AppleIcon size={22} />
+          Sign up with Apple
         </button>
 
         {/* Divider */}
@@ -105,52 +190,10 @@ export default function SignUpPage() {
 
         {/* Form */}
         <form action={formAction} className="space-y-4">
-          <div>
-            <input
-              name="name"
-              placeholder="Full Name"
-              className="w-full rounded-lg border border-stone-200 px-4 py-2"
-            />
-            {errors.name && (
-              <p className="text-red-600 font-medium">{errors.name}</p>
-            )}
-          </div>
-
-          <div>
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              className="w-full rounded-lg border border-stone-200 px-4 py-2"
-            />
-            {errors.email && (
-              <p className="text-red-600 font-medium">{errors.email}</p>
-            )}
-          </div>
-
-          <div>
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              className="w-full rounded-lg border border-stone-200 px-4 py-2"
-            />
-            {errors.password && (
-              <p className="text-red-600 font-medium">{errors.password}</p>
-            )}
-          </div>
-
-          <div>
-            <input
-              name="confirmPassword"
-              type="password"
-              placeholder="Confirm Password"
-              className="w-full rounded-lg border border-stone-200 px-4 py-2"
-            />
-            {errors.confirmPassword && (
-              <p className="text-red-600 font-medium">{errors.confirmPassword}</p>
-            )}
-          </div>
+          {renderInput("name", "Full Name")}
+          {renderInput("email", "Email", "email")}
+          {renderInput("password", "Password", "password")}
+          {renderInput("confirmPassword", "Confirm Password", "password")}
 
           {state?.formError && (
             <p className="text-sm text-red-600">{state.formError}</p>
@@ -166,14 +209,13 @@ export default function SignUpPage() {
           </button>
 
           <p className="text-center text-xs text-gray-600 mt-3">
-            {" "}
-            By signing up, you agree to our Terms & Privacy Policy.{" "}
+            By signing up, you agree to our Terms & Privacy Policy.
           </p>
           <p className="text-center text-xs text-gray-600 mt-3">
             Already have an account?
             <Link href="/auth/signin" className="text-primary font-bold">
               {" "}
-              SignIn
+              Sign In
             </Link>
           </p>
         </form>

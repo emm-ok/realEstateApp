@@ -1,12 +1,9 @@
-import { getAuthSession } from "@/auth";
 import Link from "next/link";
 
 export default async function HomePage() {
-  const session = await getAuthSession();
 
   return (
     <>
-      {!session ? (
         <section className="flex flex-col items-center justify-center min-h-[80vh] text-center">
           <h1 className="text-4xl font-bold">Find verified properties & agents</h1>
           <p className="mt-4 text-gray-600">
@@ -22,16 +19,14 @@ export default async function HomePage() {
             </Link>
           </div>
         </section>
-      ) : (
         <section className="p-8">
           <h2 className="text-2xl font-bold">
-            Welcome back, {session.user?.name}
+            Welcome back, 
           </h2>
           <p className="text-gray-600 mt-2">
             Continue exploring properties and agents.
           </p>
         </section>
-      )}
     </>
   );
 }

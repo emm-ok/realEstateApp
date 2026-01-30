@@ -5,12 +5,15 @@ import React, { useEffect, useRef, useState } from "react";
 import logo from "../assets/logo2.png";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
 import { signOut } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
+import { useConfirm } from "./confirm/ConfirmProvider";
+import { logoutUser } from "@/lib/auth";
 
 const navLinks = [
   {
@@ -139,6 +142,9 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropDown, setOpenDropDown] = useState<string | null>(null);
   const pathname = usePathname();
+  const { user, logout } = useAuth();
+  const confirm = useConfirm();
+  const router = useRouter();
 
   const profileRef = useRef<HTMLDivElement | null>(null);
 
@@ -169,12 +175,14 @@ const Navbar = () => {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
+  const initials = getInitials(user?.name);
+  // console.log(user);
 
   const isActive = (href: string) =>
     pathname === href || pathname?.startsWith(href + "/");
 
-  if(loading) {
-    toast.loading('redirecting...')
+  if (loading) {
+    toast.loading("redirecting...");
   }
 
   return (
@@ -256,22 +264,25 @@ const Navbar = () => {
               .slice(0, 5)}
           </div>
 
+          {!user ? (
             <Link
-              href="/auth/signin"
+              href="/auth/login"
               className="hidden md:flex bg-primary text-white px-4 py-2 rounded-lg"
             >
               Login
             </Link>
+          ) : (
             <div className="relative" ref={profileRef}>
-              {/* <button onClick={() => setOpenDropDown("profile")}>
-                <Avatar className="">
+              <button onClick={() => setOpenDropDown("profile")}>
+                <Avatar className="border w-12 h-12 font-bold">
                   <AvatarImage
-                    src={session?.user?.image ||  ""}
+                    src={user?.image || ""}
                     alt={`${initials || ""}`}
+                    className="w-full h-full"
                   />
-                  <AvatarFallback>{initials}</AvatarFallback>
+                  <AvatarFallback className="p-5">{initials}</AvatarFallback>
                 </Avatar>
-              </button> */}
+              </button>
 
               <AnimatePresence>
                 {openDropDown === "profile" && (
@@ -294,7 +305,20 @@ const Navbar = () => {
                       Settings
                     </Link>
                     <button
-                      onClick={() => signOut({ callbackUrl: "/auth/logout" })}
+                      onClick={() =>
+                        confirm({
+                          title: "Are you sure you want to logout?",
+                          description: "You'll be signed out of your account",
+                          confirmText: "Logout",
+                          variant: "warning",
+                          onConfirm: async () => {
+                            await logoutUser();
+                            toast.loading("Redirecting to Login...");
+                            window.location.href = "/auth/login";
+                            toast.success("Logged out successfully");
+                          },
+                        })
+                      }
                       className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
                     >
                       Log out
@@ -303,6 +327,7 @@ const Navbar = () => {
                 )}
               </AnimatePresence>
             </div>
+          )}
 
           {/* Mobile Hamburger */}
           <button
@@ -344,15 +369,12 @@ const Navbar = () => {
             className="md:hidden border-t border-gray-100 bg-white overflow-hidden"
           >
             <div className="flex flex-col px-4 py-4 gap-2">
-              <div className="px-3 py-2">
-                <Link href="/auth/signin">Login</Link>
-              </div>
               {navLinks.map((link) => (
                 <div key={link.name} className="flex flex-col">
                   <button
                     onClick={() =>
                       setOpenDropDown(
-                        openDropDown === link.name ? null : link.name
+                        openDropDown === link.name ? null : link.name,
                       )
                     }
                     className={`flex justify-between items-center px-3 py-2 rounded-lg text-left text-gray-700 font-medium hover:bg-gray-100 transition-colors ${
@@ -394,6 +416,25 @@ const Navbar = () => {
                   )}
                 </div>
               ))}
+              <button
+                onClick={() =>
+                  confirm({
+                    title: "Are you sure you want to logout?",
+                    description: "You'll be signed out of your account",
+                    confirmText: "Logout",
+                    variant: "info",
+                    onConfirm: async () => {
+                      await logoutUser();
+                      toast.loading("Redirecting to Login...");
+                      window.location.href = "/auth/login";
+                      toast.success("Logged out successfully");
+                    },
+                  })
+                }
+                className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+              >
+                Log out
+              </button>
             </div>
           </motion.div>
         )}

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useActionState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { LucideGithub, Loader2, CheckCircle, AppleIcon } from "lucide-react";
+import { LucideGithub, Loader2, CheckCircle, AppleIcon, Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { signUpSchema } from "@/lib/validation/auth";
@@ -22,7 +22,7 @@ type FormErrors = Partial<Record<keyof FormValues, string>>;
 
 type SignInState = { error: string; status: string } | { formError: string };
 
-export default function SignUpPage() {
+export default function SignUpForm() {
   const [values, setValues] = useState<FormValues>({
     name: "",
     email: "",
@@ -37,15 +37,16 @@ export default function SignUpPage() {
     password: false,
     confirmPassword: false,
   });
+  const [show, setShow] = useState(false);
   const router = useRouter();
 
   // Auto-clear errors after 4 seconds
-  useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      const timer = setTimeout(() => setErrors({}), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [errors]);
+  // useEffect(() => {
+  //   if (Object.keys(errors).length > 0) {
+  //     const timer = setTimeout(() => setErrors({}), 4000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [errors]);
 
   // Field-level validation
   const validateField = (field: keyof FormValues, value: string) => {
@@ -136,7 +137,16 @@ export default function SignUpPage() {
   ) => (
     <div className="relative">
       {touched[field] && values[field] && !errors[field] && (
-        <CheckCircle className="text-green-500 absolute right-3 top-3 h-5 w-5" />
+        <CheckCircle className="text-green-500 absolute right-8 top-3 h-4 w-4" />
+      )}
+      {field === "password" || field === "confirmPassword" ? ( 
+        type === "password" ? (
+          <Eye onClick={() => setShow(true)} className="absolute right-3 top-3 h-4 w-4" />
+        ): (
+          <EyeOff onClick={() => setShow(false)} className="absolute right-3 top-3 h-4 w-4" />
+        )
+      ): (
+        <></>
       )}
       <input
         name={field}
@@ -166,7 +176,9 @@ export default function SignUpPage() {
 
         {/* OAuth */}
         <button
-          onClick={() => signIn("google", { callbackUrl: "/" })}
+          onClick={() => {
+            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`
+          }}
           className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-3 font-medium hover:bg-gray-100 transition"
         >
           <FcGoogle size={22} />
@@ -192,8 +204,8 @@ export default function SignUpPage() {
         <form action={formAction} className="space-y-4">
           {renderInput("name", "Full Name")}
           {renderInput("email", "Email", "email")}
-          {renderInput("password", "Password", "password")}
-          {renderInput("confirmPassword", "Confirm Password", "password")}
+          {renderInput("password", "Password", `${show ? "text" : "password"}`)}
+          {renderInput("confirmPassword", "Confirm Password", `${show ? "text" : "password"}`)}
 
           {state?.formError && (
             <p className="text-sm text-red-600">{state.formError}</p>
@@ -213,7 +225,7 @@ export default function SignUpPage() {
           </p>
           <p className="text-center text-xs text-gray-600 mt-3">
             Already have an account?
-            <Link href="/auth/signin" className="text-primary font-bold">
+            <Link href="/auth/login" className="text-primary font-bold">
               {" "}
               Sign In
             </Link>

@@ -5,6 +5,8 @@ import Providers from "./providers";
 import { Toaster } from "sonner";
 import Navbar from "@/components/Navbar";
 import { AuthProvider } from "@/context/AuthContext";
+import { ConfirmProvider } from "@/components/confirm/ConfirmProvider";
+import AnimatedLayout from "@/components/providers/AnimatedLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +45,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster position="top-left" />
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ConfirmProvider>
+            <AnimatedLayout>
+              {children}
+            </AnimatedLayout>
+          </ConfirmProvider>
+        </AuthProvider>
       </body>
     </html>
   );

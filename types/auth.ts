@@ -2,7 +2,7 @@ export interface User {
     _id: string;
     name: string;
     email: string;
-    role: "user" | "agent" | "company" | "admin";
+    role: "user" | "agent_pending" | "agent" | "admin";
     image?: string | null;
     createdAt: string;
     updatedAt: string;

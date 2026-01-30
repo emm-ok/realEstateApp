@@ -21,7 +21,7 @@ type FormErrors = Partial<Record<keyof FormValues, string>>;
 
 type SignInState = { error: string; status: string } | { formError: string };
 
-export default function SignInPage() {
+export default function LoginForm() {
   const [values, setValues] = useState<FormValues>({
     email: "",
     password: "",
@@ -33,12 +33,12 @@ export default function SignInPage() {
   })
   const router = useRouter();
 
-  useEffect(() => {
-    if(Object.keys(errors).length > 0){
-      const timer = setTimeout(() => setErrors({}), 4000);
-      return () => clearTimeout(timer)
-    }
-  }, [errors])
+  // useEffect(() => {
+  //   if(Object.keys(errors).length > 0){
+  //     const timer = setTimeout(() => setErrors({}), 4000);
+  //     return () => clearTimeout(timer)
+  //   }
+  // }, [errors])
 
   const validateField = (field: keyof FormValues, value: string) => {
     const newValues = { ...values, [field]: value };
@@ -72,8 +72,7 @@ export default function SignInPage() {
       if(!res?.success) {
         return { formError: res?.message || "Login failed" }
       }
-      toast.success("Login successful");
-
+      
       setValues({
         email: "",
         password: "",
@@ -85,6 +84,7 @@ export default function SignInPage() {
 
       router.push('/');
       
+      toast.success("Login successful");
       return { formError: "" };
     } catch (error: any) {
       if (error instanceof z.ZodError) {
@@ -143,7 +143,9 @@ export default function SignInPage() {
 
         {/* OAuth */}
         <button
-          onClick={() => signIn("google", { callbackUrl: "/" })}
+          onClick={() => {
+            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`
+          }}
           className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-3 font-medium hover:bg-gray-100 transition"
         >
           <FcGoogle size={22} />
@@ -155,7 +157,7 @@ export default function SignInPage() {
           className="mt-2 w-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center gap-3 rounded-lg py-3 font-medium transition"
         >
           <AppleIcon size={22} />
-          Continue with GitHub
+          Login with Apple
         </button>
 
         {/* Divider */}
@@ -189,7 +191,7 @@ export default function SignInPage() {
         <p className="text-center text-sm text-gray-500 mt-6">
           Don’t have an account?{" "}
           <Link
-            href="/auth/signup"
+            href="/auth/register"
             className="font-medium text-black cursor-pointer"
           >
             Sign up

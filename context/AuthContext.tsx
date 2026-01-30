@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { api, apiError } from "../lib/api";
 import { redirect, usePathname } from "next/navigation";
@@ -24,7 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchUser = async () => {
     try {
       const res = await api.get("/api/auth/me");
-      setUser(res.data);
+      setUser(res.data.user);
     } catch (err) {
       if (!axios.isAxiosError(err) || err.response?.status !== 401) {
         console.log("Unexpected auth error");
@@ -64,9 +66,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [pathname])
 
 
-  // return(
-  //   <AuthContext.Provider>{children}</AuthContext.Provider>
-  // )
+  return(
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
 };
 
 export const useAuth = () => {

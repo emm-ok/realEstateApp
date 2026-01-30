@@ -6,14 +6,23 @@ import logo from "../assets/logo2.png";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import {
+  ChevronUp,
+  ChevronDown,
+  LogOut,
+  Settings,
+  User,
+  FolderArchive,
+  UserCheck2Icon,
+} from "lucide-react";
 
-import { signOut } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useConfirm } from "./confirm/ConfirmProvider";
 import { logoutUser } from "@/lib/auth";
+import { formatFullName } from "@/utils";
+import Help from "./Help";
 
 const navLinks = [
   {
@@ -138,13 +147,14 @@ const otherThree = [
 ];
 
 const Navbar = () => {
-  const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [openDropDown, setOpenDropDown] = useState<string | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user, } = useAuth();
   const confirm = useConfirm();
-  const router = useRouter();
+  // const router = useRouter();
 
   const profileRef = useRef<HTMLDivElement | null>(null);
 
@@ -155,6 +165,7 @@ const Navbar = () => {
         !profileRef.current.contains(event.target as Node)
       ) {
         setOpenDropDown(null);
+        setProfileOpen(false);
       }
     }
 
@@ -181,10 +192,6 @@ const Navbar = () => {
   const isActive = (href: string) =>
     pathname === href || pathname?.startsWith(href + "/");
 
-  if (loading) {
-    toast.loading("redirecting...");
-  }
-
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-md">
       <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8">
@@ -196,9 +203,10 @@ const Navbar = () => {
               alt="VeriSpace logo"
               width={50}
               height={50}
+              loading="eager"
               className="rounded-full shadow-sm"
             />
-            <span className="hidden md:block text-xl font-bold text-primary">
+            <span className="hidden md:block text-sm font-bold text-primary">
               VeriSpace
             </span>
           </Link>
@@ -264,98 +272,144 @@ const Navbar = () => {
               .slice(0, 5)}
           </div>
 
-          {!user ? (
-            <Link
-              href="/auth/login"
-              className="hidden md:flex bg-primary text-white px-4 py-2 rounded-lg"
+          <div className="flex items-center">
+            {/* Mobile Hamburger */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="md:hidden inline-flex items-center justify-center rounded-lg p-2 text-gray-700 hover:bg-gray-100 focus:outline-none"
             >
-              Login
-            </Link>
-          ) : (
-            <div className="relative" ref={profileRef}>
-              <button onClick={() => setOpenDropDown("profile")}>
-                <Avatar className="border w-12 h-12 font-bold">
-                  <AvatarImage
-                    src={user?.image || ""}
-                    alt={`${initials || ""}`}
-                    className="w-full h-full"
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                {isOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
                   />
-                  <AvatarFallback className="p-5">{initials}</AvatarFallback>
-                </Avatar>
-              </button>
-
-              <AnimatePresence>
-                {openDropDown === "profile" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg"
-                  >
-                    <Link
-                      href="/account/profile"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                    >
-                      Profile
-                    </Link>
-                    <Link
-                      href="/account/settings"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                    >
-                      Settings
-                    </Link>
-                    <button
-                      onClick={() =>
-                        confirm({
-                          title: "Are you sure you want to logout?",
-                          description: "You'll be signed out of your account",
-                          confirmText: "Logout",
-                          variant: "warning",
-                          onConfirm: async () => {
-                            await logoutUser();
-                            toast.loading("Redirecting to Login...");
-                            window.location.href = "/auth/login";
-                            toast.success("Logged out successfully");
-                          },
-                        })
-                      }
-                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
-                    >
-                      Log out
-                    </button>
-                  </motion.div>
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 )}
-              </AnimatePresence>
-            </div>
-          )}
+              </svg>
+            </button>
+            {!user ? (
+              <Link
+                href="/auth/login"
+                className="hidden md:flex bg-primary text-white px-4 py-2 rounded-lg"
+              >
+                Login
+              </Link>
+            ) : (
+              <div className="relative" ref={profileRef}>
+                <button onClick={() => setProfileOpen(p => !p)}>
+                  <Avatar className="w-10 h-10 font-bold">
+                    <AvatarImage
+                      src={user?.image || ""}
+                      alt={`${initials || ""}`}
+                      className="w-full h-full"
+                    />
+                    <AvatarFallback className="p-5">{initials}</AvatarFallback>
+                  </Avatar>
+                </button>
 
-          {/* Mobile Hamburger */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden inline-flex items-center justify-center rounded-lg p-2 text-gray-700 hover:bg-gray-100 focus:outline-none"
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              {isOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
+                <AnimatePresence>
+                  {profileOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute right-0 bg-white mt-2 shadow-lg rounded-lg"
+                    >
+                      <Link
+                        href="/account/profile"
+                        className="flex gap-2 p-4 hover:bg-gray-100"
+                      >
+                        <button>
+                          <Avatar className="w-10 h-10 font-bold">
+                            <AvatarImage
+                              src={user?.image || ""}
+                              alt={`${initials || ""}`}
+                              className="w-full h-full"
+                            />
+                            <AvatarFallback className="p-5">
+                              {initials}
+                            </AvatarFallback>
+                          </Avatar>
+                        </button>
+
+                        <div>
+                          <h2 className="font-bold text-sm">
+                            {formatFullName(user?.name)}
+                          </h2>
+                          <h4 className="font-extralight text-xs">
+                            {user?.email}
+                          </h4>
+                        </div>
+                      </Link>
+                      <div className="w-full h-[.1px] bg-gray-300 mb-2" />
+                      <Link
+                        href="/account/profile"
+                        className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
+                      >
+                        <User size={18} />
+                        Profile
+                      </Link>
+                      <Link
+                        href="/account/become-agent"
+                        className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100 rounded-full border border-gray-300"
+                      >
+                        <UserCheck2Icon size={18} />
+                        Become an Agent
+                      </Link>
+                      <Link
+                        href="/account/collection"
+                        className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
+                      >
+                        <FolderArchive size={18} />
+                        Collections
+                      </Link>
+                      <Help />
+                      <Link
+                        href="/account/settings"
+                        className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
+                      >
+                        <Settings size={18} />
+                        Settings
+                      </Link>
+                      <button
+                        onClick={() =>
+                          confirm({
+                            title: "Are you sure you want to logout?",
+                            description: "You'll be signed out of your account",
+                            confirmText: "Logout",
+                            variant: "warning",
+                            onConfirm: async () => {
+                              await logoutUser();
+                              toast.loading("Redirecting to Login...");
+                              window.location.href = "/auth/login";
+                              toast.success("Logged out successfully");
+                            },
+                          })
+                        }
+                        className="flex gap-1 items-center w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-gray-100 cursor-pointer"
+                      >
+                        <LogOut size={18} />
+                        Log out
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -422,7 +476,7 @@ const Navbar = () => {
                     title: "Are you sure you want to logout?",
                     description: "You'll be signed out of your account",
                     confirmText: "Logout",
-                    variant: "info",
+                    variant: "warning",
                     onConfirm: async () => {
                       await logoutUser();
                       toast.loading("Redirecting to Login...");

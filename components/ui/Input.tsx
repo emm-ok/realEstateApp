@@ -4,7 +4,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
 }
 
-const Input: React.FC<InputProps> = ({ label, ...props }) => {
+function Input({ label, value, ...props }: InputProps) {
   return (
     <div className="flex flex-col gap-0.5">
       {label && (
@@ -15,6 +15,7 @@ const Input: React.FC<InputProps> = ({ label, ...props }) => {
 
       <input
         {...props}
+        value={value ?? ""}
         className={`
           w-full
           rounded-full

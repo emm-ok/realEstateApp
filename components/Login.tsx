@@ -2,7 +2,7 @@
 
 import React, { useActionState, useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { Loader2, CheckCircle, AppleIcon } from "lucide-react";
+import { Loader2, CheckCircle, AppleIcon, Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -31,6 +31,7 @@ export default function LoginForm() {
     email: false,
     password: false,
   })
+  const [show, setShow] = useState(false);
   const router = useRouter();
 
   // useEffect(() => {
@@ -112,8 +113,17 @@ export default function LoginForm() {
   ) => (
     <div className="relative">
       {touched[field] && values[field] && !errors[field] && (
-        <CheckCircle className="text-green-500 absolute right-3 top-3 h-5 w-5" />
+        <CheckCircle className="text-green-500 absolute right-8 top-3 h-5 w-5" />
       )}
+      {field === "password" ? ( 
+              type === "password" ? (
+                <Eye onClick={() => setShow(true)} className="absolute right-3 top-3 h-4 w-4" />
+              ): (
+                <EyeOff onClick={() => setShow(false)} className="absolute right-3 top-3 h-4 w-4" />
+              )
+            ): (
+              <></>
+            )}
       <input
         name={field}
         type={type}
@@ -170,7 +180,7 @@ export default function LoginForm() {
         {/* Email / Password */}
         <form action={formAction} className="space-y-4">
           {renderInput("email", "Full Name") } 
-          {renderInput("password", "Password", "password") } 
+          {renderInput("password", "Password", `${show ? "text" : "password"}`) } 
 
           {/* Error */}
           {state.formError && (

@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: "lh3.googleusercontent.com",
       },
     ],
+    domains: [
+      "lh3.googleusercontent.com",
+      "res.cloudinary.com",
+      "backendphotographywebapp.onrender.com",
+    ],
   },
 };
 

@@ -117,7 +117,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                 <button
                   onClick={handleConfirm}
                   disabled={loading}
-                  className={`px-4 py-2 rounded-lg text-sm text-white flex items-center gap-2 disabled:opacity-70
+                  className={`cursor-pointer px-4 py-2 rounded-lg text-sm text-white flex items-center gap-2 disabled:opacity-70
                     ${variantStyles(options.variant)}`}
                 >
                   {loading && (
@@ -138,9 +138,9 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
 function variantStyles(variant?: ConfirmVariant) {
   switch (variant) {
     case "danger":
-      return "bg-red-600 hover:bg-red-700";
+      return "bg-red-700 hover:bg-red-800";
     case "warning":
-      return "bg-amber-600 hover:bg-amber-600";
+      return "bg-red-700 hover:bg-red-800";
     case "success":
       return "bg-green-600 hover:bg-green-700";
     default:

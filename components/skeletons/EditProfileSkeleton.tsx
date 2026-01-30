@@ -4,7 +4,7 @@ export const EditProfileSkeleton = () => {
   return (
     <div className="max-w-3xl mx-auto">
       <Skeleton className="h-7 w-40 mb-6" />
-      <div className="rounded-2xl p-6 space-y-6 bg-background border">
+      <div className="rounded-2xl p-6 space-y-6 bg-background">
         <div className="flex items-center gap-6">
           <Skeleton className="h-24 w-24 rounded-full" />
           <Skeleton className="h-9 w-32 rounded-full" />

@@ -41,7 +41,7 @@ const EditProfilePage = () => {
       try {
         const data = await getCurrentUser();
         setUser(data);
-        console.log("data", data)
+        console.log("data", data);
         setFormData({
           name: data.name || "",
           phone: data.phone || "",
@@ -90,12 +90,24 @@ const EditProfilePage = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!user) return;
 
     setSaving(true);
     try {
+      const isDirty =
+        formData.name !== user.name ||
+        formData.phone !== user.phone ||
+        formData.location !== user.location ||
+        formData.bio !== user.bio ||
+        formData.image !== user.image;
+
+      if (!isDirty) {
+        toast("No changes to save");
+        setSaving(false);
+        return
+      }
+
       const updated = await updateUserById(user._id, formData);
       setUser(updated);
       toast.success("Profile updated");
@@ -123,6 +135,7 @@ const EditProfilePage = () => {
                 alt="Profile"
                 width={96}
                 height={96}
+                loading="eager"
                 className="rounded-full object-cover border dark:border-zinc-700 cursor-pointer"
                 onClick={() => setPreviewImage(formData.image)}
               />
@@ -157,17 +170,18 @@ const EditProfilePage = () => {
 
         {/* Form */}
         <form
-          onSubmit={() =>
+          onSubmit={(e) => {
+            e.preventDefault();
+            if(saving) return;
+
             confirm({
               title: "Save changes",
               description: "Your profile will be updated",
               confirmText: "Save",
               variant: "info",
-              onConfirm: async () => {
-                await handleSubmit;
-              },
-            })
-          }
+              onConfirm: handleSubmit,
+            });
+          }}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
           <Input
@@ -197,8 +211,8 @@ const EditProfilePage = () => {
               value={formData.bio}
               onChange={handleChange}
               rows={4}
-              className="w-full mt-1 rounded-xl p-4 text-sm
-                bg-stone-200 text-neutral-800
+              className="w-full mt-1 rounded-xl border p-4 text-sm
+                text-neutral-800
                 focus:ring-2 focus:ring-black dark:focus:ring-white"
             />
           </div>

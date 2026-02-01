@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Input from "@/components/ui/Input";
 import { toast } from "sonner";
-import { getCurrentUser, updateUserById } from "@/lib/user";
+import { getCurrentUser, updateCurrentUser } from "@/lib/user";
 import { User as UserIcon, X } from "lucide-react";
 import Image from "next/image";
 import { EditProfileSkeleton } from "../skeletons/EditProfileSkeleton";
@@ -25,6 +25,21 @@ const EditProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const previewImageRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        previewImageRef.current &&
+        !previewImageRef.current.contains(e.target as Node)
+      ) {
+        setPreviewImage(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -41,7 +56,6 @@ const EditProfilePage = () => {
       try {
         const data = await getCurrentUser();
         setUser(data);
-        console.log("data", data);
         setFormData({
           name: data.name || "",
           phone: data.phone || "",
@@ -105,10 +119,10 @@ const EditProfilePage = () => {
       if (!isDirty) {
         toast("No changes to save");
         setSaving(false);
-        return
+        return;
       }
 
-      const updated = await updateUserById(user._id, formData);
+      const updated = await updateCurrentUser(formData);
       setUser(updated);
       toast.success("Profile updated");
     } catch {
@@ -128,7 +142,7 @@ const EditProfilePage = () => {
       <div className="rounded-2xl p-6 space-y-6 bg-background">
         {/* Avatar + Preview */}
         <div className="flex items-center gap-6">
-          <div className="relative">
+          <div className="relative w-40 h-40">
             {formData.image ? (
               <Image
                 src={formData.image}
@@ -136,7 +150,7 @@ const EditProfilePage = () => {
                 width={96}
                 height={96}
                 loading="eager"
-                className="rounded-full object-cover border dark:border-zinc-700 cursor-pointer"
+                className="w-full h-full rounded-full object-cover border dark:border-zinc-700 cursor-pointer"
                 onClick={() => setPreviewImage(formData.image)}
               />
             ) : (
@@ -172,7 +186,7 @@ const EditProfilePage = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if(saving) return;
+            if (saving) return;
 
             confirm({
               title: "Save changes",
@@ -234,7 +248,10 @@ const EditProfilePage = () => {
           Image Preview Modal
       =========================== */}
       {previewImage && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+        <div
+          ref={previewImageRef}
+          className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"
+        >
           <div className="relative max-w-xl w-full rounded-xl overflow-hidden">
             <Image
               src={previewImage}

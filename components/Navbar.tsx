@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import logo from "../assets/logo2.png";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   ChevronUp,
   ChevronDown,
@@ -152,7 +152,7 @@ const Navbar = () => {
   const [profileOpen, setProfileOpen] = useState(false);
 
   const pathname = usePathname();
-  const { user, } = useAuth();
+  const { user, setModalOpen } = useAuth();
   const confirm = useConfirm();
   // const router = useRouter();
 
@@ -301,12 +301,18 @@ const Navbar = () => {
               </svg>
             </button>
             {!user ? (
-              <Link
-                href="/auth/login"
+              <button
+              onClick={() => setModalOpen("login")}
                 className="hidden md:flex bg-primary text-white px-4 py-2 rounded-lg"
               >
                 Login
-              </Link>
+              </button>
+              // <Link
+              //   href="/login"
+              //   className="hidden md:flex bg-primary text-white px-4 py-2 rounded-lg"
+              // >
+              //   Login
+              // </Link>
             ) : (
               <div className="relative" ref={profileRef}>
                 <button onClick={() => setProfileOpen(p => !p)}>
@@ -394,7 +400,7 @@ const Navbar = () => {
                             onConfirm: async () => {
                               await logoutUser();
                               toast.loading("Redirecting to Login...");
-                              window.location.href = "/auth/login";
+                              window.location.href = "/";
                               toast.success("Logged out successfully");
                             },
                           })
@@ -480,7 +486,7 @@ const Navbar = () => {
                     onConfirm: async () => {
                       await logoutUser();
                       toast.loading("Redirecting to Login...");
-                      window.location.href = "/auth/login";
+                      window.location.href = "/login";
                       toast.success("Logged out successfully");
                     },
                   })

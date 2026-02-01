@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useActionState } from "react";
+import React, { useState, useActionState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { LucideGithub, Loader2, CheckCircle, AppleIcon, Eye, EyeOff } from "lucide-react";
+import { Loader2, CheckCircle, AppleIcon, Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { signUpSchema } from "@/lib/validation/auth";
 import { toast } from "sonner";
 import { z } from "zod";
 import { registerUser } from "@/lib/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type FormValues = {
   name: string;
@@ -39,6 +39,7 @@ export default function SignUpForm() {
   });
   const [show, setShow] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Auto-clear errors after 4 seconds
   // useEffect(() => {
@@ -93,8 +94,9 @@ export default function SignUpForm() {
         return { formError: res?.message || "Failed to create account" };
       }
 
+      const redirectTo = searchParams.get("redirect") || "/";
+      router.push(redirectTo)
       toast.success("User account has been created successfully");
-
       // Reset form (optional)
       setValues({
         name: "",
@@ -108,8 +110,6 @@ export default function SignUpForm() {
         password: false,
         confirmPassword: false,
       });
-
-      router.push("/auth/signin");
       
       return { formError: "" };
     } catch (error: any) {
@@ -141,9 +141,9 @@ export default function SignUpForm() {
       )}
       {field === "password" || field === "confirmPassword" ? ( 
         type === "password" ? (
-          <Eye onClick={() => setShow(true)} className="absolute right-3 top-3 h-4 w-4" />
+          <Eye onClick={() => setShow(true)} className="absolute cursor-pointer right-3 top-3 h-4 w-4" />
         ): (
-          <EyeOff onClick={() => setShow(false)} className="absolute right-3 top-3 h-4 w-4" />
+          <EyeOff onClick={() => setShow(false)} className="absolute cursor-pointer right-3 top-3 h-4 w-4" />
         )
       ): (
         <></>
@@ -225,7 +225,7 @@ export default function SignUpForm() {
           </p>
           <p className="text-center text-xs text-gray-600 mt-3">
             Already have an account?
-            <Link href="/auth/login" className="text-primary font-bold">
+            <Link href="/login" className="text-primary font-bold">
               {" "}
               Sign In
             </Link>

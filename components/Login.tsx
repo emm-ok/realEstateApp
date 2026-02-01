@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useActionState, useEffect, useState } from "react";
+import React, { useActionState, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Loader2, CheckCircle, AppleIcon, Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
@@ -8,9 +8,8 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { signInSchema } from "@/lib/validation/auth";
 import { z } from "zod";
-// import { redirect } from "next/navigation";
 import { loginUser } from "@/lib/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type FormValues = {
   email: string;
@@ -33,6 +32,7 @@ export default function LoginForm() {
   })
   const [show, setShow] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // useEffect(() => {
   //   if(Object.keys(errors).length > 0){
@@ -82,9 +82,9 @@ export default function LoginForm() {
         email: false,
         password: false,
       });
-
-      router.push('/');
       
+      const redirectTo = searchParams.get("redirect") || "/";
+      router.push(redirectTo)
       toast.success("Login successful");
       return { formError: "" };
     } catch (error: any) {
@@ -201,7 +201,7 @@ export default function LoginForm() {
         <p className="text-center text-sm text-gray-500 mt-6">
           Don’t have an account?{" "}
           <Link
-            href="/auth/register"
+            href="/register"
             className="font-medium text-black cursor-pointer"
           >
             Sign up

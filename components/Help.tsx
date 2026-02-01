@@ -35,7 +35,7 @@ const Help = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute -left-44 top-0 ml-2 p-4 bg-white rounded-md shadow-lg z-50 overflow-hidden"
+              className="absolute -left-44 top-0 ml-2 w-40 bg-white rounded-md shadow-lg z-50 overflow-hidden"
               onMouseEnter={() => setOpenProfileDropdown("help")}
               onMouseLeave={() => setOpenProfileDropdown(null)}
             >

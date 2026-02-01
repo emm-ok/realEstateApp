@@ -5,8 +5,7 @@ export const getCurrentUser = async () => {
   return res.data.user;
 };
 
-export const updateUserById = async (
-  id: string,
+export const updateCurrentUser = async (
   data: {
     name: string;
     phone?: string;
@@ -16,7 +15,7 @@ export const updateUserById = async (
   },
 ) => {
   try {
-    const res = await api.patch(`/api/users/${id}`, data);
+    const res = await api.patch(`/api/users/me`, data);
     return res.data;
   } catch (error) {
     apiError(error);

@@ -8,6 +8,8 @@ import {
 } from "next/navigation";
 import { LoginCredentials, RegisterCredentials, User } from "@/types/auth";
 import axios from "axios";
+import Cookies from "js-cookie"
+import { loginUser, registerUser } from "@/lib/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -45,28 +47,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const login = async (credentials: LoginCredentials) => {
-    try {
-      await api.post("/api/login", credentials);
-      await fetchUser();
-
-      const redirectTo = searchParams.get("redirect") || "/";
-      router.push(redirectTo);
-    } catch (error) {
-      throw apiError(error);
-    }
+    await loginUser(credentials)
+    await fetchUser();
   };
 
   const register = async (data: RegisterCredentials) => {
-    try {
-      await api.post("/api/register", data);
-      await fetchUser();
-    } catch (error) {
-      throw apiError(error);
-    }
+    await registerUser(data);
   };
 
   const logout = async () => {
-    await api.post("/api/logout");
+    await api.post("/api/auth/logout");
     setUser(null);
     router.push("/?auth=login");
   };
@@ -74,6 +64,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    if(!loading && user){
+      const redirectTo = searchParams.get("redirect") || Cookies.get("redirect_after_login") || "/";
+
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider

@@ -301,18 +301,18 @@ const Navbar = () => {
               </svg>
             </button>
             {!user ? (
-              <button
-              onClick={() => setModalOpen("login")}
-                className="hidden md:flex bg-primary text-white px-4 py-2 rounded-lg"
-              >
-                Login
-              </button>
-              // <Link
-              //   href="/login"
+              // <button
+              // onClick={() => setModalOpen("login")}
               //   className="hidden md:flex bg-primary text-white px-4 py-2 rounded-lg"
               // >
               //   Login
-              // </Link>
+              // </button>
+              <Link
+                href="/login"
+                className="hidden md:flex bg-primary text-white px-4 py-2 rounded-lg"
+              >
+                Login
+              </Link>
             ) : (
               <div className="relative" ref={profileRef}>
                 <button onClick={() => setProfileOpen(p => !p)}>

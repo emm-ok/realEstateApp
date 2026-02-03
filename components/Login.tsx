@@ -8,8 +8,8 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { signInSchema } from "@/lib/validation/auth";
 import { z } from "zod";
-import { loginUser } from "@/lib/auth";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 type FormValues = {
   email: string;
@@ -33,6 +33,7 @@ export default function LoginForm() {
   const [show, setShow] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { login } = useAuth();
 
   // useEffect(() => {
   //   if(Object.keys(errors).length > 0){
@@ -68,11 +69,7 @@ export default function LoginForm() {
     try {
       signInSchema.parse(values);
 
-      const res = await loginUser(values)
-
-      if(!res?.success) {
-        return { formError: res?.message || "Login failed" }
-      }
+      await login(values)
       
       setValues({
         email: "",
@@ -154,7 +151,9 @@ export default function LoginForm() {
         {/* OAuth */}
         <button
           onClick={() => {
-            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`
+            const redirect = new URLSearchParams(window.location.search).get("redirect") || "/";
+
+            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google?redirect=${encodeURIComponent(redirect)}`
           }}
           className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-3 font-medium hover:bg-gray-100 transition"
         >

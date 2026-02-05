@@ -47,9 +47,7 @@ export default function RootLayout({
         <Toaster position="top-left" />
         <AuthProvider>
           <ConfirmProvider>
-            <AnimatedLayout>
               {children}
-            </AnimatedLayout>
           </ConfirmProvider>
         </AuthProvider>
       </body>

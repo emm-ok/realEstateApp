@@ -30,7 +30,7 @@ export default function LoginForm() {
     email: false,
     password: false,
   })
-  const [show, setShow] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
@@ -114,9 +114,9 @@ export default function LoginForm() {
       )}
       {field === "password" ? ( 
               type === "password" ? (
-                <Eye onClick={() => setShow(true)} className="absolute right-3 top-3 h-4 w-4" />
+                <Eye onClick={() => setShowPassword(true)} className="absolute right-3 top-3 h-4 w-4" />
               ): (
-                <EyeOff onClick={() => setShow(false)} className="absolute right-3 top-3 h-4 w-4" />
+                <EyeOff onClick={() => setShowPassword(false)} className="absolute right-3 top-3 h-4 w-4" />
               )
             ): (
               <></>
@@ -179,7 +179,7 @@ export default function LoginForm() {
         {/* Email / Password */}
         <form action={formAction} className="space-y-4">
           {renderInput("email", "Full Name") } 
-          {renderInput("password", "Password", `${show ? "text" : "password"}`) } 
+          {renderInput("password", "Password", `${showPassword ? "text" : "password"}`) } 
 
           {/* Error */}
           {state.formError && (

@@ -37,7 +37,8 @@ export default function SignUpForm() {
     password: false,
     confirmPassword: false,
   });
-  const [show, setShow] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -139,14 +140,19 @@ export default function SignUpForm() {
       {touched[field] && values[field] && !errors[field] && (
         <CheckCircle className="text-green-500 absolute right-8 top-3 h-4 w-4" />
       )}
-      {field === "password" || field === "confirmPassword" ? ( 
+      {field === "password" && ( 
         type === "password" ? (
-          <Eye onClick={() => setShow(true)} className="absolute cursor-pointer right-3 top-3 h-4 w-4" />
+          <Eye onClick={() => setShowPassword(true)} className="absolute cursor-pointer right-3 top-3 h-4 w-4" />
         ): (
-          <EyeOff onClick={() => setShow(false)} className="absolute cursor-pointer right-3 top-3 h-4 w-4" />
+          <EyeOff onClick={() => setShowPassword(false)} className="absolute cursor-pointer right-3 top-3 h-4 w-4" />
         )
-      ): (
-        <></>
+      )}
+      {field === "confirmPassword" && ( 
+        type === "password" ? (
+          <Eye onClick={() => setShowConfirmPassword(true)} className="absolute cursor-pointer right-3 top-3 h-4 w-4" />
+        ): (
+          <EyeOff onClick={() => setShowConfirmPassword(false)} className="absolute cursor-pointer right-3 top-3 h-4 w-4" />
+        )
       )}
       <input
         name={field}
@@ -204,8 +210,8 @@ export default function SignUpForm() {
         <form action={formAction} className="space-y-4">
           {renderInput("name", "Full Name")}
           {renderInput("email", "Email", "email")}
-          {renderInput("password", "Password", `${show ? "text" : "password"}`)}
-          {renderInput("confirmPassword", "Confirm Password", `${show ? "text" : "password"}`)}
+          {renderInput("password", "Password", `${showPassword ? "text" : "password"}`)}
+          {renderInput("confirmPassword", "Confirm Password", `${showConfirmPassword ? "text" : "password"}`)}
 
           {state?.formError && (
             <p className="text-sm text-red-600">{state.formError}</p>

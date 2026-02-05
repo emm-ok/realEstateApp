@@ -1,17 +1,17 @@
-import React from 'react'
+"use client"
 
-export default function page() {
-  return (
-    <div>
-        Become an agent
-        Hero
-        Why join us
-        Requirements
-        Application Form  /* Stepper */
-        Review Process
-    </div>
-  )
+import BecomeAgentForm from "@/components/BecomeAgentForm";
+
+const Page = () => {
+  
+  return(
+    <BecomeAgentForm />
+  );
 }
+
+export default Page
+
+
 
 
 // function useApplicationProgress(userId: string) {

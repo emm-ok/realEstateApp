@@ -1,10 +1,12 @@
 import EditProfilePage from '@/components/profile/EditProfile'
 import React from 'react'
 
-const Page = () => {
+const page = () => {
   return (
-    <div><EditProfilePage /></div>
+    <div>
+        <EditProfilePage />
+    </div>
   )
 }
 
-export default Page
+export default page

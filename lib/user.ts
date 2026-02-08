@@ -23,3 +23,17 @@ export const updateCurrentUser = async (data: {
     apiError(error);
   }
 };
+
+export const changePassword = async (data: {
+  currentPassword: string
+  newPassword: string
+}) => {
+  try {
+    const res = await api.put(`/api/users/me/change-password`, data);
+    return res.data;
+  } catch (error) {
+    apiError(error);
+  }
+};
+
+

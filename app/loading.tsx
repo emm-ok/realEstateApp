@@ -1,14 +1,8 @@
-import React from "react";
-import { Vortex } from "react-loader-spinner";
+import PageLoader from "@/components/ui/PageLoader";
 
 const loading = () => {
   return (
-      <Vortex
-        height={80}
-        width={80}
-        color="#000"
-        visible={true}
-      />
+      <PageLoader text="Loading..." />
   );
 };
 

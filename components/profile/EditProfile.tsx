@@ -25,21 +25,6 @@ const EditProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const previewImageRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (
-        previewImageRef.current &&
-        !previewImageRef.current.contains(e.target as Node)
-      ) {
-        setPreviewImage(null);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -137,18 +122,16 @@ const EditProfilePage = () => {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-      <h2 className="text-xl font-semibold text-foreground">Edit Profile</h2>
-
       <div className="rounded-2xl p-6 space-y-6 bg-background">
         {/* Avatar + Preview */}
         <div className="flex items-center gap-6">
-          <div className="relative w-40 h-40">
+          <div className="relative w-30 h-30">
             {formData.image ? (
               <Image
                 src={formData.image}
                 alt="Profile"
-                width={96}
-                height={96}
+                width={60}
+                height={60}
                 loading="eager"
                 className="w-full h-full rounded-full object-cover border dark:border-zinc-700 cursor-pointer"
                 onClick={() => setPreviewImage(formData.image)}
@@ -169,7 +152,7 @@ const EditProfilePage = () => {
           </div>
 
           <label
-            className="px-4 py-2 rounded-full text-sm font-medium cursor-pointer
+            className="px-4 py-2 rounded-full text-sm border-gray-400 border  font-medium cursor-pointer
             bg-background text-foreground"
           >
             Change Photo
@@ -225,7 +208,7 @@ const EditProfilePage = () => {
               value={formData.bio}
               onChange={handleChange}
               rows={4}
-              className="w-full mt-1 rounded-xl border p-4 text-sm
+              className="w-full mt-1 rounded-xl border border-gray-300 p-4 text-sm
                 text-neutral-800
                 focus:ring-2 focus:ring-black dark:focus:ring-white"
             />
@@ -234,7 +217,7 @@ const EditProfilePage = () => {
           <div className="md:col-span-2 flex justify-end">
             <button
               disabled={saving}
-              className="px-6 py-3 rounded-xl font-medium cursor-pointer
+              className="px-4 py-2 rounded-xl font-medium cursor-pointer
                 bg-background text-foreground border border-border
                 disabled:opacity-50"
             >
@@ -249,10 +232,13 @@ const EditProfilePage = () => {
       =========================== */}
       {previewImage && (
         <div
-          ref={previewImageRef}
           className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"
+          onClick={() => setPreviewImage(null)}
         >
-          <div className="relative max-w-xl w-full rounded-xl overflow-hidden">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-xl w-full h-3/4 rounded-xl overflow-hidden"
+          >
             <Image
               src={previewImage}
               alt="Preview"

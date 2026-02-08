@@ -23,6 +23,7 @@ import { useConfirm } from "./confirm/ConfirmProvider";
 import { logoutUser } from "@/lib/auth";
 import { formatFullName } from "@/utils";
 import Help from "./Help";
+import PageLoader from "./ui/PageLoader";
 
 const navLinks = [
   {
@@ -150,9 +151,10 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropDown, setOpenDropDown] = useState<string | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   const pathname = usePathname();
-  const { user, setModalOpen } = useAuth();
+  const { user } = useAuth();
   const confirm = useConfirm();
   // const router = useRouter();
 
@@ -176,8 +178,6 @@ const Navbar = () => {
     };
   }, []);
 
-  // const handleMouseEnter = (name: string) => setOpenDropDown(name);
-  // const handleMouseLeave = () => setOpenDropDown(null);
 
   const getInitials = (name = "") => {
     const parts = name.trim().split(" ");
@@ -187,10 +187,13 @@ const Navbar = () => {
   };
 
   const initials = getInitials(user?.name);
-  // console.log(user);
 
   const isActive = (href: string) =>
     pathname === href || pathname?.startsWith(href + "/");
+
+  if (redirecting) {
+    return <PageLoader text="Logging out..." />;
+  }
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-md">
@@ -315,7 +318,7 @@ const Navbar = () => {
               </Link>
             ) : (
               <div className="relative" ref={profileRef}>
-                <button onClick={() => setProfileOpen(p => !p)}>
+                <button onClick={() => setProfileOpen((p) => !p)}>
                   <Avatar className="w-10 h-10 font-bold">
                     <AvatarImage
                       src={user?.image || ""}
@@ -335,15 +338,15 @@ const Navbar = () => {
                       className="absolute right-0 bg-white mt-2 shadow-lg rounded-lg"
                     >
                       <Link
-                        href="/account/profile"
+                        href="/account/settings/profile"
                         className="flex gap-2 p-4 hover:bg-gray-100"
                       >
                         <button>
-                          <Avatar className="w-10 h-10 font-bold">
+                          <Avatar className=" font-bold">
                             <AvatarImage
                               src={user?.image || ""}
                               alt={`${initials || ""}`}
-                              className="w-full h-full"
+                              className="w-full h-full object-cover"
                             />
                             <AvatarFallback className="p-5">
                               {initials}
@@ -362,7 +365,7 @@ const Navbar = () => {
                       </Link>
                       <div className="w-full h-[.1px] bg-gray-300 mb-2" />
                       <Link
-                        href="/account/profile"
+                        href="/account/settings/profile"
                         className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
                       >
                         <User size={18} />
@@ -384,7 +387,7 @@ const Navbar = () => {
                       </Link>
                       <Help />
                       <Link
-                        href="/account/settings"
+                        href="/account/settings/profile"
                         className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
                       >
                         <Settings size={18} />
@@ -398,6 +401,7 @@ const Navbar = () => {
                             confirmText: "Logout",
                             variant: "warning",
                             onConfirm: async () => {
+                              setRedirecting(true);
                               await logoutUser();
                               toast.loading("Redirecting to Login...");
                               window.location.href = "/";

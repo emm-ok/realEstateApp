@@ -8,7 +8,7 @@ function Input({ label, value, ...props }: InputProps) {
   return (
     <div className="flex flex-col gap-0.5">
       {label && (
-        <label className="text-[11px] md:text-sm font-medium text-foreground">
+        <label className="text-xs md:text-sm font-medium text-foreground">
           {label}
         </label>
       )}
@@ -22,6 +22,7 @@ function Input({ label, value, ...props }: InputProps) {
           bg-background
           text-foreground
           border
+          border-gray-300
           px-3 py-2 md:px-4 md:py-2.5
           text-xs md:text-sm
           placeholder:text-zinc-400

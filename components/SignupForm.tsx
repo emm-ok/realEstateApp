@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useActionState } from "react";
-import { FcGoogle } from "react-icons/fc";
-import { Loader2, CheckCircle, AppleIcon, Eye, EyeOff } from "lucide-react";
-import { signIn } from "next-auth/react";
+import React, { useState, useActionState, useEffect } from "react";
+import { CheckCircle, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { signUpSchema } from "@/lib/validation/auth";
 import { toast } from "sonner";
 import { z } from "zod";
 import { registerUser } from "@/lib/auth";
 import { useRouter, useSearchParams } from "next/navigation";
+import Loader from "./ui/Loader";
+import GoogleAppleButton from "./ui/GoogleAppleButton";
 
 type FormValues = {
   name: string;
@@ -40,16 +40,16 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
-
+  const searchParams = useSearchParams();  
+  
   // Auto-clear errors after 4 seconds
-  // useEffect(() => {
-  //   if (Object.keys(errors).length > 0) {
-  //     const timer = setTimeout(() => setErrors({}), 4000);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [errors]);
-
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      const timer = setTimeout(() => setErrors({}), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [errors]);
+  
   // Field-level validation
   const validateField = (field: keyof FormValues, value: string) => {
     const newValues = { ...values, [field]: value };
@@ -95,7 +95,7 @@ export default function SignUpForm() {
         return { formError: res?.message || "Failed to create account" };
       }
 
-      const redirectTo = searchParams.get("redirect") || "/";
+      const redirectTo = searchParams.get("redirect") || "/login";
       router.push(redirectTo)
       toast.success("User account has been created successfully");
       // Reset form (optional)
@@ -175,29 +175,12 @@ export default function SignUpForm() {
         {/* Header */}
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-gray-900">
-            Create your account 🚀
+            Create your account
           </h1>
           <p className="text-gray-500 mt-1">Join us and get started in minutes</p>
         </div>
 
-        {/* OAuth */}
-        <button
-          onClick={() => {
-            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`
-          }}
-          className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-3 font-medium hover:bg-gray-100 transition"
-        >
-          <FcGoogle size={22} />
-          Sign up with Google
-        </button>
-
-        <button
-          onClick={() => signIn("github", { callbackUrl: "/" })}
-          className="mt-2 w-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center gap-3 rounded-lg py-3 font-medium transition"
-        >
-          <AppleIcon size={22} />
-          Sign up with Apple
-        </button>
+        <GoogleAppleButton />
 
         {/* Divider */}
         <div className="flex items-center my-6">
@@ -222,8 +205,7 @@ export default function SignUpForm() {
             disabled={isPending}
             className="w-full bg-black text-white rounded-lg py-3 font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {isPending && <Loader2 className="animate-spin h-4 w-4" />}
-            Create Account
+            {isPending ? <Loader size={24} text="Creating account..." /> : "Create Account" }
           </button>
 
           <p className="text-center text-xs text-gray-600 mt-3">

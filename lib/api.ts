@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-export const api = axios.create({
+const api = axios.create({
     baseURL: API_URL,
     withCredentials: true,
     headers: {
@@ -10,16 +10,24 @@ export const api = axios.create({
     }
 })
 
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("accessToken");
+    if(token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+})
 
-export const apiError = (error: unknown): never => {
+
+const apiError = (error: unknown): never => {
     if(axios.isAxiosError(error)){
         const message = 
         error.response?.data?.message ||
         error.response?.data?.error ||
         "Something went wrong"
-
+        
         throw new Error(message);
     }
-
+    
     throw new Error("Unexpected error occured");
 };
+
+export {api, apiError};

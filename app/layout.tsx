@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import { AuthProvider } from "@/context/AuthContext";
 import { ConfirmProvider } from "@/components/confirm/ConfirmProvider";
 import AnimatedLayout from "@/components/providers/AnimatedLayout";
+import { RouteLoader } from "@/components/ui/RouteLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,7 @@ export default function RootLayout({
         <Toaster position="top-left" />
         <AuthProvider>
           <ConfirmProvider>
+            <RouteLoader />
               {children}
           </ConfirmProvider>
         </AuthProvider>

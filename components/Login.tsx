@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useActionState, useState } from "react";
-import { FcGoogle } from "react-icons/fc";
-import { Loader2, CheckCircle, AppleIcon, Eye, EyeOff } from "lucide-react";
-import { signIn } from "next-auth/react";
+import React, { useActionState, useEffect, useState } from "react";
+import { CheckCircle, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { signInSchema } from "@/lib/validation/auth";
 import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import Loader from "./ui/Loader";
+import GoogleAppleButton from "./ui/GoogleAppleButton";
+import PageLoader from "./ui/PageLoader";
 
 type FormValues = {
   email: string;
@@ -31,16 +32,17 @@ export default function LoginForm() {
     password: false,
   })
   const [showPassword, setShowPassword] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
 
-  // useEffect(() => {
-  //   if(Object.keys(errors).length > 0){
-  //     const timer = setTimeout(() => setErrors({}), 4000);
-  //     return () => clearTimeout(timer)
-  //   }
-  // }, [errors])
+  useEffect(() => {
+    if(Object.keys(errors).length > 0){
+      const timer = setTimeout(() => setErrors({}), 4000);
+      return () => clearTimeout(timer)
+    }
+  }, [errors])
 
   const validateField = (field: keyof FormValues, value: string) => {
     const newValues = { ...values, [field]: value };
@@ -67,6 +69,7 @@ export default function LoginForm() {
     formData: FormData
   ): Promise<SignInState> => {
     try {
+      setRedirecting(true)
       signInSchema.parse(values);
 
       await login(values)
@@ -95,14 +98,21 @@ export default function LoginForm() {
       return {
         formError: error.message || "Invalid email or password",
       };
+    } finally{
+      setRedirecting(false);
     }
   };
+
+  
   const [state, formAction, isPending] = useActionState(signInAction, {
     error: "",
     status: "INITIAL",
   });
-
-
+  
+  if (redirecting) {
+  return <PageLoader text="Redirecting..." />;
+}
+  
   const renderInput = (
     field: keyof FormValues,
     placeholder: string,
@@ -142,32 +152,12 @@ export default function LoginForm() {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         {/* Header */}
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Welcome Back 👋</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
           <p className="text-gray-500 mt-1">
             Sign in to continue to your account
           </p>
         </div>
-
-        {/* OAuth */}
-        <button
-          onClick={() => {
-            const redirect = new URLSearchParams(window.location.search).get("redirect") || "/";
-
-            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google?redirect=${encodeURIComponent(redirect)}`
-          }}
-          className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-3 font-medium hover:bg-gray-100 transition"
-        >
-          <FcGoogle size={22} />
-          Continue with Google
-        </button>
-
-        <button
-          onClick={() => signIn("github", { callbackUrl: "/" })}
-          className="mt-2 w-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center gap-3 rounded-lg py-3 font-medium transition"
-        >
-          <AppleIcon size={22} />
-          Login with Apple
-        </button>
+        <GoogleAppleButton />
 
         {/* Divider */}
         <div className="flex items-center my-6">
@@ -191,8 +181,7 @@ export default function LoginForm() {
             disabled={isPending}
             className="w-full bg-black text-white rounded-lg py-3 font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-            {isPending ? "Signing you in…" : "Sign In"}
+            { isPending ? <Loader text="Signing you in..." /> : "Sign in" }
           </button>
         </form>
 

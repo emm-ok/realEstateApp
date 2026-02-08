@@ -1,11 +1,13 @@
 "use client"
 
-import BecomeAgentForm from "@/components/BecomeAgentForm";
+import AgentForm from "@/components/agent-application/AgentForm";
 
 const Page = () => {
   
   return(
-    <BecomeAgentForm />
+    <div className="h-screen flex items-center">
+      <AgentForm />
+    </div>
   );
 }
 

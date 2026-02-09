@@ -1,17 +1,23 @@
-export default function ProgressBar({ step, total }) {
-  const percent = (step / total) * 100;
+export default function ProgressBar({ currentStep, total } 
+  : { 
+    currentStep: number, 
+    total: number
+   }) {
+  const percent = ((currentStep + 1) / total) * 100;
 
-  return (
-    <div className="mb-4">
-      <div className="h-2 bg-gray-200 rounded">
+return (
+    <div>
+      <div className="flex justify-between text-sm mb-2">
+        <span>Step {currentStep + 1} of {total}</span>
+        <span>{Math.round(percent)}%</span>
+      </div>
+
+      <div className="w-full bg-gray-200 h-2 rounded">
         <div
-          className="h-2 bg-blue-600 rounded"
+          className="bg-blue-600 h-2 rounded transition-all"
           style={{ width: `${percent}%` }}
         />
       </div>
-      <p className="text-sm mt-1">
-        Step {step} of {total}
-      </p>
     </div>
   );
 }

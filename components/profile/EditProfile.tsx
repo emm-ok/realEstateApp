@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Input from "@/components/ui/Input";
 import { toast } from "sonner";
 import { getCurrentUser, updateCurrentUser } from "@/lib/user";
-import { User as UserIcon, X } from "lucide-react";
+import { Delete, Eye, Recycle, User as UserIcon, X } from "lucide-react";
 import Image from "next/image";
 import { EditProfileSkeleton } from "../skeletons/EditProfileSkeleton";
 import { useConfirm } from "../confirm/ConfirmProvider";
@@ -88,6 +88,30 @@ const EditProfilePage = () => {
       setImageLoading(false);
     }
   };
+  const handleRemoveImage = () => {
+    setImageLoading(true);
+
+    try {
+      const uploadData = new FormData();
+      uploadData.delete("file");
+      setFormData((p) => ({ ...p, image: "" }));
+      toast.success("Photo removed");
+    } catch {
+      toast.error("Image removal failed");
+    } finally {
+      setImageLoading(false);
+    }
+  };
+
+  const removeImage = () => {
+    confirm({
+      title: "Remove Image",
+      description: "Your profile image will be removed",
+      confirmText: "Remove",
+      variant: "info",
+      onConfirm: handleRemoveImage,
+    });
+  };
 
   const handleSubmit = async () => {
     if (!user) return;
@@ -125,17 +149,19 @@ const EditProfilePage = () => {
       <div className="rounded-2xl p-6 space-y-6 bg-background">
         {/* Avatar + Preview */}
         <div className="flex items-center gap-6">
-          <div className="relative w-30 h-30">
+          <div className="relative w-24 h-24 group">
             {formData.image ? (
-              <Image
-                src={formData.image}
-                alt="Profile"
-                width={60}
-                height={60}
-                loading="eager"
-                className="w-full h-full rounded-full object-cover border dark:border-zinc-700 cursor-pointer"
-                onClick={() => setPreviewImage(formData.image)}
-              />
+              <>
+                <Image
+                  src={formData.image}
+                  alt="Profile"
+                  width={60}
+                  height={60}
+                  loading="eager"
+                  className="w-full h-full rounded-full object-cover border dark:border-zinc-700 cursor-pointer"
+                  onClick={() => setPreviewImage(formData.image)}
+                />
+              </>
             ) : (
               <div
                 className="w-24 h-24 flex items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 cursor-pointer"
@@ -144,6 +170,12 @@ const EditProfilePage = () => {
                 <UserIcon className="text-zinc-500" size={48} />
               </div>
             )}
+            <button className="absolute inset-0 rounded-full bg-black/40 hidden group-hover:flex transition-all duration-700 items-center justify-center">
+                <X size={18} color="white" onClick={removeImage} />
+                {user.image && (
+                  <Eye size={18} color="white" onClick={() => setPreviewImage(formData.image)} />
+                )}
+            </button>
             {imageLoading && (
               <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center">
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -251,6 +283,15 @@ const EditProfilePage = () => {
               onClick={() => setPreviewImage(null)}
             >
               <X size={20} />
+            </button>
+            <button
+              onClick={() => {
+                removeImage()
+                setPreviewImage(null);
+              }}
+              className="absolute top-15 right-3 text-white bg-black/50 p-2 rounded-full hover:bg-black/70"
+            >
+              Remove image
             </button>
           </div>
         </div>

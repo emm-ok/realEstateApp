@@ -36,7 +36,7 @@ export function Sidebar() {
       {/* ===== MOBILE TOGGLE BUTTON ===== */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-20 right-4 z-50 bg-card text-card-foreground shadow-md p-2 rounded-lg flex items-center gap-2 hover:bg-gray-200"
+        className="md:hidden fixed top-20 right-4 z-50 bg-card text-card-foreground shadow-md p-2 rounded-lg flex items-center gap-2 bg-white hover:bg-gray-200"
         aria-label="Open Menu"
       >
         <Settings size={24} />
@@ -92,7 +92,7 @@ export function Sidebar() {
       {/* ===== DESKTOP SIDEBAR ===== */}
       <aside className="hidden md:flex md:flex-col md:w-64 bg-background shadow-md p-4">
         <Avatar className="w-10 h-10 font-bold mb-6">
-          <AvatarImage src={user?.image || ""} />
+          <AvatarImage src={user?.image || ""} className="object-cover" />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
 

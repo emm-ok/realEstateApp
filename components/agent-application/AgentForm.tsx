@@ -1,31 +1,41 @@
 "use client";
 
 import { useAgentApplication } from "@/hooks/useAgentApplication";
-import ProgressBar from "./ProgressBar";
-import Slide from "./Slide";
 import { steps } from "@/config/stepsConfig";
+import StepRenderer from "./StepRenderer";
+import Loader from "../ui/Loader";
 
 export default function AgentForm() {
-  const { data, step, setStep, saveDraft, loading } = useAgentApplication();
+  const app = useAgentApplication();
 
-  if (loading) return <p>Loading...</p>;
+  if (app.loading) return <Loader text="Loading application..." />;
 
-  const StepComponent = steps[step - 1].component;
+  const step = steps[app.currentStep - 1];
 
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 rounded shadow">
-      <Slide>
-        <ProgressBar step={step} total={steps.length} />
+    <div className="max-w-2xl mx-auto p-6 bg-white shadow rounded">
+      <h1 className="text-xl font-bold mb-4">{step.title}</h1>
 
-        <StepComponent data={data} onSave={saveDraft} />
+      <StepRenderer
+        step={step}
+        formData={app.formData}
+        updateForm={app.updateForm}
+        localDocs={app.localDocs}
+        setLocalDocs={app.setLocalDocs}
+        loading={app.loading}
+      />
 
-        <div className="flex justify-between mt-6">
-          {step > 1 && <button onClick={() => setStep(step - 1)}>Back</button>}
-          {step < steps.length && (
-            <button onClick={() => setStep(step + 1)}>Next</button>
-          )}
-        </div>
-      </Slide>
+      <div className="flex justify-between mt-6">
+        {app.currentStep > 1 && (
+          <button onClick={app.back}>Back</button>
+        )}
+
+        {app.currentStep < steps.length ? (
+          <button onClick={app.next}>Next</button>
+        ) : (
+          <button onClick={app.submit}>Submit</button>
+        )}
+      </div>
     </div>
   );
 }

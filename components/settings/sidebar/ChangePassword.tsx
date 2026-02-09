@@ -8,6 +8,7 @@ import { z } from "zod";
 import { changePassword } from "@/lib/user";
 import Input from "@/components/ui/Input";
 import Loader from "@/components/ui/Loader";
+import { useRouter } from "next/navigation";
 
 type FormValues = {
   currentPassword: string;
@@ -36,6 +37,7 @@ export default function ChangePassword() {
   >({});
 
   const [loading, setLoading] = useState(false);
+  const router = useRouter()
 
   const validateField = (field: keyof FormValues, value: string) => {
     const newValues = { ...values, [field]: value };
@@ -76,6 +78,7 @@ export default function ChangePassword() {
         newPassword: false,
         confirmPassword: false,
       });
+      router.push("/login");
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         const fieldErrors = error.flatten().fieldErrors as FormErrors;

@@ -323,7 +323,7 @@ const Navbar = () => {
                     <AvatarImage
                       src={user?.image || ""}
                       alt={`${initials || ""}`}
-                      className="w-full h-full"
+                      className="w-full h-full object-cover"
                     />
                     <AvatarFallback className="p-5">{initials}</AvatarFallback>
                   </Avatar>
@@ -404,7 +404,7 @@ const Navbar = () => {
                               setRedirecting(true);
                               await logoutUser();
                               toast.loading("Redirecting to Login...");
-                              window.location.href = "/";
+                              window.location.href = "/login";
                               toast.success("Logged out successfully");
                             },
                           })

@@ -1,9 +1,13 @@
 import AgentForm from '@/components/agent-application/AgentForm'
 import React from 'react'
 
-const Page = () => {
+const page = () => {
   return (
-    <div><AgentForm /></div>
+    <div>
+      <AgentForm />
+    </div>
   )
 }
+
+export default page
 

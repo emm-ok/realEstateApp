@@ -1,33 +1,36 @@
-export default function Step1({ data, onSave }) {
-  const professional = data?.professional || {};
+import Input from "@/components/ui/Input";
+
+export default function StepProfessional({ formData, updateForm }) {
+  const p = formData.professional;
 
   return (
-    <div>
-      <h2>Professional Info</h2>
-
-      <input
+    <div className="flex flex-col gap-4">
+      <Input
         placeholder="License Number"
-        defaultValue={professional.licenseNumber}
-        onBlur={(e) =>
-          onSave({
-            professional: {
-              ...professional,
-              licenseNumber: e.target.value,
-            },
+        value={p.licenseNumber || ""}
+        onChange={(e) =>
+          updateForm({
+            professional: { ...p, licenseNumber: e.target.value },
+          })
+        }
+      />
+      <Input
+        placeholder="License Country"
+        value={p.licenseCountry || ""}
+        onChange={(e) =>
+          updateForm({
+            professional: { ...p, licenseCountry: e.target.value },
           })
         }
       />
 
-      <input
+      <Input
         type="number"
         placeholder="Years Experience"
-        defaultValue={professional.yearsExperience}
-        onBlur={(e) =>
-          onSave({
-            professional: {
-              ...professional,
-              yearsExperience: +e.target.value,
-            },
+        value={p.yearsExperience || ""}
+        onChange={(e) =>
+          updateForm({
+            professional: { ...p, yearsExperience: e.target.value },
           })
         }
       />

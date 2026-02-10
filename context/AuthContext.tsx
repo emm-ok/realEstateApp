@@ -1,15 +1,14 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { api, apiError } from "../lib/api";
-import {
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { LoginCredentials, RegisterCredentials, User } from "@/types/auth";
 import axios from "axios";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 import { loginUser, registerUser } from "@/lib/auth";
+import { deleteCurrentUser } from "@/lib/user";
+import { toast } from "sonner";
 
 interface AuthContextType {
   user: User | null;
@@ -17,6 +16,7 @@ interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: RegisterCredentials) => Promise<void>;
   logout: () => Promise<void>;
+  deleteUser;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const login = async (credentials: LoginCredentials) => {
-    await loginUser(credentials)
+    await loginUser(credentials);
     await fetchUser();
   };
 
@@ -61,14 +61,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     router.push("/?auth=login");
   };
 
+  const deleteUser = async () => {
+    try {
+      const res = await api.delete("/api/users/me");
+      setUser(null)
+      toast(res.data.message)
+      router.push("/register");
+    } catch (error) {
+      apiError(error);
+    }
+  };
+
   useEffect(() => {
     fetchUser();
   }, []);
 
   useEffect(() => {
-    if(!loading && user){
-      const redirectTo = searchParams.get("redirect") || Cookies.get("redirect_after_login") || "/";
-
+    if (!loading && user) {
+      const redirectTo =
+        searchParams.get("redirect") ||
+        Cookies.get("redirect_after_login") ||
+        "/";
     }
   }, [user]);
 
@@ -80,6 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         login,
         register,
         logout,
+        deleteUser,
       }}
     >
       {children}

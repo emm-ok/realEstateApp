@@ -6,15 +6,15 @@ import PageLoader from "./PageLoader";
 
 export function RouteLoader() {
   const pathname = usePathname();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    const timeout = setTimeout(() => {
+    // setLoading(true);
+    // const timeout = setTimeout(() => {
       setLoading(false);
-    }, 300); // smoothness buffer
+    // }, 300); // smoothness buffer
 
-    return () => clearTimeout(timeout);
+    // return () => clearTimeout(timeout);
   }, [pathname]);
 
   if (!loading) return null;

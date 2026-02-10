@@ -178,7 +178,6 @@ const Navbar = () => {
     };
   }, []);
 
-
   const getInitials = (name = "") => {
     const parts = name.trim().split(" ");
     if (parts.length === 0) return "";
@@ -303,6 +302,7 @@ const Navbar = () => {
                 )}
               </svg>
             </button>
+
             {!user ? (
               // <button
               // onClick={() => setModalOpen("login")}
@@ -312,14 +312,14 @@ const Navbar = () => {
               // </button>
               <Link
                 href="/login"
-                className="hidden md:flex bg-primary text-white px-4 py-2 rounded-lg"
+                className="md:flex bg-none text-black md:bg-primary md:text-white px-4 py-2 rounded-lg"
               >
                 Login
               </Link>
             ) : (
               <div className="relative" ref={profileRef}>
                 <button onClick={() => setProfileOpen((p) => !p)}>
-                  <Avatar className="w-10 h-10 font-bold">
+                  <Avatar className="w-10 h-10 font-bold shadow-md">
                     <AvatarImage
                       src={user?.image || ""}
                       alt={`${initials || ""}`}
@@ -342,13 +342,13 @@ const Navbar = () => {
                         className="flex gap-2 p-4 hover:bg-gray-100"
                       >
                         <button>
-                          <Avatar className=" font-bold">
+                          <Avatar className="font-bold">
                             <AvatarImage
                               src={user?.image || ""}
                               alt={`${initials || ""}`}
                               className="w-full h-full object-cover"
                             />
-                            <AvatarFallback className="p-5">
+                            <AvatarFallback className="p-2 shadow-md border border-gray-400">
                               {initials}
                             </AvatarFallback>
                           </Avatar>
@@ -480,25 +480,27 @@ const Navbar = () => {
                   )}
                 </div>
               ))}
-              <button
-                onClick={() =>
-                  confirm({
-                    title: "Are you sure you want to logout?",
-                    description: "You'll be signed out of your account",
-                    confirmText: "Logout",
-                    variant: "warning",
-                    onConfirm: async () => {
-                      await logoutUser();
-                      toast.loading("Redirecting to Login...");
-                      window.location.href = "/login";
-                      toast.success("Logged out successfully");
-                    },
-                  })
-                }
-                className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
-              >
-                Log out
-              </button>
+              {user && (
+                <button
+                  onClick={() =>
+                    confirm({
+                      title: "Are you sure you want to logout?",
+                      description: "You'll be signed out of your account",
+                      confirmText: "Logout",
+                      variant: "warning",
+                      onConfirm: async () => {
+                        await logoutUser();
+                        toast.loading("Redirecting to Login...");
+                        window.location.href = "/login";
+                        toast.success("Logged out successfully");
+                      },
+                    })
+                  }
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+                >
+                  Log out
+                </button>
+              )}
             </div>
           </motion.div>
         )}

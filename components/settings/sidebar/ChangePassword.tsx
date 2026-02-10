@@ -55,7 +55,8 @@ export default function ChangePassword() {
     }
   };
 
-  const submit = async () => {
+  const submit = async (e: any) => {
+    e.preventDefault();
     try {
       changePasswordSchema.parse(values);
 
@@ -143,7 +144,7 @@ export default function ChangePassword() {
   };
 
   return (
-    <div className="">
+    <form onSubmit={submit}>
       <h1 className="text-xl font-semibold mb-4">
         Change Password
       </h1>
@@ -154,13 +155,13 @@ export default function ChangePassword() {
         {renderInput("confirmPassword", "Confirm New Password")}
 
         <button
-          onClick={submit}
+          type="submit"
           disabled={loading}
           className="w-full bg-black text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {loading ? <Loader text="Updating..." /> : "Change Password"}
         </button>
       </div>
-    </div>
+    </form>
   );
 }

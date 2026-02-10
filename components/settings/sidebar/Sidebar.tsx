@@ -91,7 +91,7 @@ export function Sidebar() {
 
       {/* ===== DESKTOP SIDEBAR ===== */}
       <aside className="hidden md:flex md:flex-col md:w-64 bg-background shadow-md p-4">
-        <Avatar className="w-10 h-10 font-bold mb-6">
+        <Avatar className="w-10 h-10 font-bold mb-6 shadow-md">
           <AvatarImage src={user?.image || ""} className="object-cover" />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>

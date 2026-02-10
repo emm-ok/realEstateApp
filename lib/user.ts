@@ -37,3 +37,11 @@ export const changePassword = async (data: {
 };
 
 
+// export const deleteCurrentUser = async () => {
+//   try {
+//     const res = await api.delete("/api/users/me");
+//     return res.data;
+//   } catch (error) {
+//     apiError(error);
+//   }
+// };

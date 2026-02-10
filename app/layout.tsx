@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Montserrat } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Lato, Montserrat } from "next/font/google";
 import "./globals.css";
-import Providers from "./providers";
 import { Toaster } from "sonner";
-import Navbar from "@/components/Navbar";
 import { AuthProvider } from "@/context/AuthContext";
 import { ConfirmProvider } from "@/components/confirm/ConfirmProvider";
-import AnimatedLayout from "@/components/providers/AnimatedLayout";
 import { RouteLoader } from "@/components/ui/RouteLoader";
 
 const geistSans = Geist({
@@ -29,6 +26,11 @@ const montserrat = Montserrat({
   variable: "--font-heading",
   weight: ["400", "700"],
 });
+const lato = Lato({
+  weight: "400",
+  variable: "--font-heading",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -43,13 +45,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} antialiased`}
       >
         <Toaster position="top-left" />
         <AuthProvider>
           <ConfirmProvider>
             <RouteLoader />
-              {children}
+                {children}
           </ConfirmProvider>
         </AuthProvider>
       </body>

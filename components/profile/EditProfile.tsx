@@ -170,12 +170,16 @@ const EditProfilePage = () => {
                 <UserIcon className="text-zinc-500" size={48} />
               </div>
             )}
-            <button className="absolute inset-0 rounded-full bg-black/40 hidden group-hover:flex transition-all duration-700 items-center justify-center">
+            {/* {user.image && ( */}
+              <button className="absolute inset-0 rounded-full bg-black/40 hidden group-hover:flex transition-all duration-700 items-center justify-center gap-2">
                 <X size={18} color="white" onClick={removeImage} />
-                {user.image && (
-                  <Eye size={18} color="white" onClick={() => setPreviewImage(formData.image)} />
-                )}
-            </button>
+                <Eye
+                  size={18}
+                  color="white"
+                  onClick={() => setPreviewImage(formData.image)}
+                />
+              </button>
+            {/* )} */}
             {imageLoading && (
               <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center">
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -286,7 +290,7 @@ const EditProfilePage = () => {
             </button>
             <button
               onClick={() => {
-                removeImage()
+                removeImage();
                 setPreviewImage(null);
               }}
               className="absolute top-15 right-3 text-white bg-black/50 p-2 rounded-full hover:bg-black/70"

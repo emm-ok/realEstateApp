@@ -9,6 +9,7 @@ export interface User {
     createdAt: string;
     updatedAt: string;
     googleId: string;
+    isActive: boolean;
 }
 
 export interface LoginCredentials {

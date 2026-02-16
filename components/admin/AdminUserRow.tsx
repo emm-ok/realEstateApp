@@ -1,13 +1,9 @@
 import { User } from "@/types/auth";
-import { MoreHorizontal, MoreVertical } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-interface AdminUserRowProps {
-  user: User;
-}
-
-export default function AdminUserRow({ user }: AdminUserRowProps) {
+export default function AdminUserRow({ user }: { user: User }) {
   const initials =
     user?.name
       ?.split(" ")
@@ -16,54 +12,61 @@ export default function AdminUserRow({ user }: AdminUserRowProps) {
       .toUpperCase() ?? "?";
 
   return (
-    <tr className="text-xs grid grid-cols-6 p-4 items-center">
-      <td className="">
-        <div className="flex gap-2 items-center">
-          <div className="w-10 h-10">
-            {user?.image ? (
-              <Image
-                src={user?.image}
-                alt="User avatar"
-                width={40}
-                height={40}
-                className="rounded-full object-cover w-full h-full"
-              />
-            ) : (
-              <Avatar className="w-10 h-10 font-bold shadow-md">
-                <AvatarImage
-                  src={user?.image || ""}
-                  alt={`${initials || ""}`}
-                  className="w-full h-full object-cover"
-                />
-                <AvatarFallback className="p-5">{initials}</AvatarFallback>
-              </Avatar>
-            )}
-          </div>
+    <tr className="hover:bg-gray-50 transition">
+      {/* User */}
+      <td className="px-4 py-4">
+        <div className="flex items-center gap-3 w-10 h-10">
+          {user.image ? (
+            <Image
+              src={user.image}
+              alt="User avatar"
+              width={40}
+              height={40}
+              className="w-full h-full rounded-full object-cover"
+            />
+          ) : (
+            <Avatar className="w-10 h-10 font-bold">
+              <AvatarImage src="" />
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+          )}
 
-          <div className="hidden md:block">
-            <div className="font-bold">{user?.name}</div>
-            {/* <div>{user?.email}</div> */}
+          <div>
+            <div className="">{user.name}</div>
+            {/* <div className="text-xs text-gray-500">{user.email}</div> */}
           </div>
         </div>
       </td>
 
-      <td>
-        <span>{user?.role}</span>
+      {/* Role */}
+      <td className="px-4 py-4 capitalize">{user.role}</td>
+
+      {/* Login */}
+      <td className="px-4 py-4">
+        {user.googleId ? "Google" : "Email"}
       </td>
-      <td>
-        <span>{user?.googleId ? "Google" : "Email"}</span>
+
+      {/* Status */}
+      <td className="px-4 py-4">
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium
+            ${
+              user.isActive
+                ? "bg-green-100 text-green-700"
+                : "bg-gray-200 text-gray-600"
+            }
+          `}
+        >
+          {user.isActive ? "Active" : "Inactive"}
+        </span>
       </td>
-      <td>
-        <span>{user?.isActive ? "active" : "null"}</span>
-      </td>
-      <td className="flex items-center gap-4">
-        <span>{new Date(user.createdAt).toLocaleDateString()}</span>
-        <button>
-          <MoreVertical size={14} className="text-on-surface/70" />
+
+      {/* Actions */}
+      <td className="px-4 py-4 text-right">
+        <button className="p-2 hover:bg-gray-100 rounded-md">
+          <MoreVertical size={16} />
         </button>
       </td>
-      {/* <td>
-      </td> */}
     </tr>
   );
 }

@@ -9,21 +9,13 @@ import { usePathname } from "next/navigation";
 import {
   ChevronUp,
   ChevronDown,
-  LogOut,
-  Settings,
-  User,
-  FolderArchive,
-  UserCheck2Icon,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useConfirm } from "./confirm/ConfirmProvider";
-import { logoutUser } from "@/lib/auth";
-import { formatFullName } from "@/utils";
-import Help from "./Help";
 import PageLoader from "./ui/PageLoader";
+import ProfileDropDown from "./ProfileDropDown";
+import Logout from "./Logout";
 
 const navLinks = [
   {
@@ -33,6 +25,7 @@ const navLinks = [
       { name: "Apartments", href: "/buy/apartments" },
       { name: "Houses", href: "/buy/houses" },
       { name: "Development", href: "/buy/development" },
+      { name: "Properties", href: "/buy/properties" },
     ],
   },
 
@@ -229,7 +222,7 @@ const Navbar = () => {
                     href={link.href}
                     className={`flex items-center rounded-xs text-xs font-medium transition-colors ${
                       isActive(link.href)
-                        ? "text-primary font-semibold border-b-2 border-primary"
+                        ? "text-primary font-semibold border-primary"
                         : "text-gray-700"
                     }`}
                   >
@@ -312,112 +305,20 @@ const Navbar = () => {
               // </button>
               <Link
                 href="/login"
-                className="md:flex bg-none text-black md:bg-primary md:text-white px-4 py-2 rounded-lg"
+                className="md:flex bg-none text-white md:bg-neutral-700 px-4 py-2 rounded-lg"
               >
                 Login
               </Link>
             ) : (
-              <div className="relative" ref={profileRef}>
-                <button onClick={() => setProfileOpen((p) => !p)}>
-                  <Avatar className="w-10 h-10 font-bold shadow-md">
-                    <AvatarImage
-                      src={user?.image || ""}
-                      alt={`${initials || ""}`}
-                      className="w-full h-full object-cover"
-                    />
-                    <AvatarFallback className="p-5">{initials}</AvatarFallback>
-                  </Avatar>
-                </button>
-
-                <AnimatePresence>
-                  {profileOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 bg-white mt-2 shadow-lg rounded-lg"
-                    >
-                      <Link
-                        href="/account/settings/profile"
-                        className="flex gap-2 p-4 hover:bg-gray-100"
-                      >
-                        <button>
-                          <Avatar className="font-bold">
-                            <AvatarImage
-                              src={user?.image || ""}
-                              alt={`${initials || ""}`}
-                              className="w-full h-full object-cover"
-                            />
-                            <AvatarFallback className="p-2 shadow-md border border-gray-400">
-                              {initials}
-                            </AvatarFallback>
-                          </Avatar>
-                        </button>
-
-                        <div>
-                          <h2 className="font-bold text-sm">
-                            {formatFullName(user?.name)}
-                          </h2>
-                          <h4 className="font-extralight text-xs">
-                            {user?.email}
-                          </h4>
-                        </div>
-                      </Link>
-                      <div className="w-full h-[.1px] bg-gray-300 mb-2" />
-                      <Link
-                        href="/account/settings/profile"
-                        className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
-                      >
-                        <User size={18} />
-                        Profile
-                      </Link>
-                      <Link
-                        href="/account/become-agent"
-                        className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100 rounded-full border border-gray-300"
-                      >
-                        <UserCheck2Icon size={18} />
-                        Become an Agent
-                      </Link>
-                      <Link
-                        href="/account/collection"
-                        className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
-                      >
-                        <FolderArchive size={18} />
-                        Collections
-                      </Link>
-                      <Help />
-                      <Link
-                        href="/account/settings/profile"
-                        className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
-                      >
-                        <Settings size={18} />
-                        Settings
-                      </Link>
-                      <button
-                        onClick={() =>
-                          confirm({
-                            title: "Are you sure you want to logout?",
-                            description: "You'll be signed out of your account",
-                            confirmText: "Logout",
-                            variant: "warning",
-                            onConfirm: async () => {
-                              setRedirecting(true);
-                              await logoutUser();
-                              toast.loading("Redirecting to Login...");
-                              window.location.href = "/login";
-                              toast.success("Logged out successfully");
-                            },
-                          })
-                        }
-                        className="flex gap-1 items-center w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-gray-100 cursor-pointer"
-                      >
-                        <LogOut size={18} />
-                        Log out
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              <ProfileDropDown
+                profileRef={profileRef}
+                initials={initials}
+                user={user}
+                profileOpen={profileOpen}
+                setProfileOpen={setProfileOpen}
+                setRedirecting={setRedirecting}
+                confirm={confirm}
+              />
             )}
           </div>
         </div>
@@ -442,7 +343,7 @@ const Navbar = () => {
                       )
                     }
                     className={`flex justify-between items-center px-3 py-2 rounded-lg text-left text-gray-700 font-medium hover:bg-gray-100 transition-colors ${
-                      isActive(link.href) ? "text-primary" : ""
+                      isActive(link.href) ? "text-primary font-semibold border-b border-gray-400 " : ""
                     }`}
                   >
                     {link.name}
@@ -481,25 +382,7 @@ const Navbar = () => {
                 </div>
               ))}
               {user && (
-                <button
-                  onClick={() =>
-                    confirm({
-                      title: "Are you sure you want to logout?",
-                      description: "You'll be signed out of your account",
-                      confirmText: "Logout",
-                      variant: "warning",
-                      onConfirm: async () => {
-                        await logoutUser();
-                        toast.loading("Redirecting to Login...");
-                        window.location.href = "/login";
-                        toast.success("Logged out successfully");
-                      },
-                    })
-                  }
-                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
-                >
-                  Log out
-                </button>
+                <Logout />
               )}
             </div>
           </motion.div>

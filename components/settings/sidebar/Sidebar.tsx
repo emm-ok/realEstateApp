@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { settingsNav } from "@/config/settings.config";
 import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Settings, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export function Sidebar() {
   const { user } = useAuth();
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const getInitials = (name = "") => {
     const parts = name.trim().split(" ");
@@ -23,96 +23,65 @@ export function Sidebar() {
 
   const initials = getInitials(user?.name);
 
-  // Prevent background scroll when mobile drawer is open
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [mobileOpen]);
-
-  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <>
-      {/* ===== MOBILE TOGGLE BUTTON ===== */}
-      <button
-        onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-20 right-4 z-50 bg-card text-card-foreground shadow-md p-2 rounded-lg flex items-center gap-2 bg-white hover:bg-gray-200"
-        aria-label="Open Menu"
+    <motion.aside
+      // onMouseEnter={() => setExpanded(true)}
+      // onMouseLeave={() => setExpanded(false)}
+      onClick={() => setExpanded(!expanded)}
+      animate={{ width: expanded ? 260 : 64 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      className="fixed h-screen bg-gray-500/20 backdrop-blur-lg shadow-lg z-40 flex flex-col overflow-hidden m-2 rounded-xl"
+    >
+      {/* Header */}
+      <div
+        className={`flex items-center py-4 ${
+          expanded ? "justify-between px-4" : "justify-center"
+        }`}
       >
-        <Settings size={24} />
-      </button>
+        {expanded ? (
+          <X onClick={() => setExpanded(false)} />
+        ) : (
+          <Menu onClick={() => setExpanded(true)} />
+        )}
+        {expanded && <h2 className="text-lg font-bold">Settings</h2>}
 
-      {/* ===== MOBILE DRAWER ===== */}
-      {mobileOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-40 bg-black/30 md:hidden "
-            onClick={() => setMobileOpen(false)}
-          />
-
-          <motion.aside
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed right-0 top-0 z-50 w-[80%] bg-white max-w-xs h-full bg-background shadow-lg md:hidden flex flex-col text-xs"
-          >
-            <div className="flex items-center justify-between p-4">
-              <Avatar className="w-10 h-10 font-bold">
-                <AvatarImage src={user?.image || ""} className="object-cover" />
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
-              <button onClick={() => setMobileOpen(false)}>
-                <X size={24} />
-              </button>
-            </div>
-
-            <nav className="flex flex-col gap-1 p-4">
-              {settingsNav.map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/account/settings/${item.id}`}
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded transition 
-                    ${isActive(`/account/settings/${item.id}`)
-                      ? "bg-neutral-200 dark:bg-neutral-800 font-semibold"
-                      : "hover:bg-neutral-100 dark:hover:bg-neutral-700"}
-                  `}
-                >
-                  <item.icon size={16} />
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </motion.aside>
-        </>
-      )}
-
-      {/* ===== DESKTOP SIDEBAR ===== */}
-      <aside className="hidden md:flex md:flex-col md:w-64 bg-background shadow-md p-4">
-        <Avatar className="w-10 h-10 font-bold mb-6 shadow-md">
+        {expanded && (
+          <Avatar className="w-10 h-10 font-bold">
           <AvatarImage src={user?.image || ""} className="object-cover" />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
+        )}
+      </div>
 
-        <nav className="flex flex-col gap-1">
-          {settingsNav.map((item) => (
-            <Link
-              key={item.id}
-              href={`/account/settings/${item.id}`}
-              className={`flex items-center gap-2 px-3 py-2 rounded transition
-                ${isActive(`/account/settings/${item.id}`)
-                  ? "bg-neutral-200 dark:bg-neutral-800 font-semibold"
-                  : "hover:bg-neutral-100 dark:hover:bg-neutral-700"}
-              `}
-            >
-              <item.icon size={16} />
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </aside>
-    </>
+      {/* Navigation */}
+      <nav className="flex flex-col gap-1 px-2">
+        {settingsNav.map((item) => (
+          <Link
+            key={item.id}
+            href={`/account/settings/${item.id}`}
+            className={`group flex items-center rounded-md transition
+              ${expanded ? "gap-3 px-3 py-3 justify-start" : "justify-center py-3"}
+              ${
+                isActive(`/account/settings/${item.id}`)
+                  ? "bg-neutral-300 font-semibold"
+                  : "hover:bg-neutral-300"
+              }
+            `}
+          >
+            <item.icon size={20} />
+
+            {/* Label (completely removed when collapsed) */}
+            {expanded && (
+              <span className="whitespace-nowrap">
+                {item.label}
+              </span>
+            )}
+          </Link>
+        ))}
+      </nav>
+    </motion.aside>
   );
 }

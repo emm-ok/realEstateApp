@@ -10,17 +10,21 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export function useAgentApplication() {
-  const [loading, setLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [stepLoading, setStepLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<any>(null);
   const [localDocs, setLocalDocs] = useState<any>({});
+  const [editReturnStep, setEditReturnStep] = useState<number | null>(null);
+
   const router = useRouter();
 
   useEffect(() => {
-    api
-      .get("/api/agent-applications/me")
-      .then((res) => {
-        const data = res.data;
+    api.get("/api/agent-applications/me")
+      .then(res => {
+        const data = res.data.application;
         setFormData({
           professional: {
             ...data.professional,
@@ -30,55 +34,79 @@ export function useAgentApplication() {
         });
         setCurrentStep(data.currentStep || 1);
       })
-      .finally(() => setLoading(false));
+      .finally(() => setPageLoading(false));
   }, []);
 
   const updateForm = (values: any) => {
     setFormData((prev: any) => ({ ...prev, ...values }));
   };
 
+  // ---------------- NEXT ----------------
   const next = async () => {
-    const error = validateStep(currentStep, formData, localDocs);
+    setStepLoading(true);
 
-    if (error) {
-      toast.error(error);
-      return;
+    try {
+      const error = validateStep(currentStep, formData, localDocs);
+      if (error) return toast.error(error);
+
+      if (currentStep === 3) {
+        if (localDocs.idCard) await uploadDocument("idCard", localDocs.idCard);
+        if (localDocs.realEstateLicense)
+          await uploadDocument("realEstateLicense", localDocs.realEstateLicense);
+        if (localDocs.selfie) await uploadDocument("selfie", localDocs.selfie);
+      }
+
+      if (editReturnStep === 4) {
+        await updateDraft({ ...formData, currentStep: 4 });
+        setCurrentStep(4);
+        setEditReturnStep(null);
+        return;
+      }
+
+      const nextStep = currentStep + 1;
+      await updateDraft({ ...formData, currentStep: nextStep });
+      setCurrentStep(nextStep);
+    } finally {
+      setStepLoading(false);
     }
-    await updateDraft({ ...formData, currentStep });
-
-    if (currentStep === 3) {
-      if (localDocs.idCard) await uploadDocument("idCard", localDocs.idCard);
-      if (localDocs.realEstateLicense)
-        await uploadDocument("realEstateLicense", localDocs.realEstateLicense);
-      if (localDocs.selfie) await uploadDocument("selfie", localDocs.selfie);
-    }
-
-    setCurrentStep((s) => s + 1);
   };
 
   const back = () => {
-    if (currentStep > 1) setCurrentStep((s) => s - 1);
+    setCurrentStep(s => Math.max(1, s - 1));
   };
 
-  const submit = async () => {
-    await submitApplication();
-    toast("application submitted successfully.");
-    setTimeout(() => {
-      toast("An email will be sent to you when reivewed");
-    }, 3000);
-
-    router.push("/account/become-agent");
+  const goToStep = (step: number) => {
+    setEditReturnStep(currentStep);
+    setCurrentStep(step);
+    updateDraft({ ...formData, currentStep: step });
   };
+
+  // const submit = async () => {
+  //   setSubmitLoading(true);
+  //   try {
+  //     await submitApplication();
+  //     router.push("/account/become-agent/success");
+  //   } finally {
+  //     setSubmitLoading(false);
+  //   }
+  // };
 
   return {
-    loading,
+    pageLoading,
+    stepLoading,
+    submitLoading,
+    setSubmitLoading,
     currentStep,
     formData,
     updateForm,
     next,
     back,
-    submit,
+    // submit,
     localDocs,
     setLocalDocs,
+    goToStep,
   };
 }
+
+
+//   toast("Application submitted successfully.");

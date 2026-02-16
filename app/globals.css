@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 
+*{
+  box-sizing: border-box;
+}
 :root {
   --text-primary: #22333b;
   --text-neutral: #0a0908;
@@ -37,3 +40,59 @@
 body {
   font-family: var(--font-heading);
 }
+
+
+/* Settings Security */
+.btn-primary {
+  @apply px-4 py-2 bg-black text-white rounded hover:bg-gray-800;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 border rounded hover:bg-gray-100;
+}
+
+
+/* Agent Application Successful Submission */
+@keyframes drawCircle {
+  from {
+    stroke-dasharray: 0 158;
+  }
+  to {
+    stroke-dasharray: 158 0;
+  }
+}
+
+@keyframes drawCheck {
+  from {
+    stroke-dasharray: 0 50;
+  }
+  to {
+    stroke-dasharray: 50 0;
+  }
+}
+
+.animate-circle {
+  stroke-dasharray: 158;
+  animation: drawCircle 1s ease-out forwards;
+}
+
+.animate-check {
+  stroke-dasharray: 50;
+  animation: drawCheck 0.6s ease-out 0.8s forwards;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

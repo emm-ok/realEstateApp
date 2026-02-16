@@ -145,8 +145,8 @@ const EditProfilePage = () => {
   if (!user) return null;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-      <div className="rounded-2xl p-6 space-y-6 bg-background">
+    <div className="max-w-3xl mx-auto py-6 space-y-6">
+      <div className="rounded-2xl space-y-6 bg-background">
         {/* Avatar + Preview */}
         <div className="flex items-center gap-6">
           <div className="relative w-24 h-24 group">

@@ -11,7 +11,11 @@ import {
   Shield,
   Building2,
   UserCog,
+  MessageCircle,
+  ArrowLeftRight,
+  UserCircle,
 } from "lucide-react";
+import { FcMoneyTransfer } from "react-icons/fc";
 
 // export const SIDEBAR_NAVS: Record<Role, SidebarNavItem[]> = {
 export const SIDEBAR_NAVS = {
@@ -124,32 +128,44 @@ export const SIDEBAR_NAVS = {
     {
       id: "users",
       label: "Users",
-      path: "/admin/users",
+      path: "/admin/dashboard/users",
       icon: Users,
     },
     {
       id: "roles",
       label: "Roles & Permissions",
-      path: "/admin/roles",
+      path: "/admin/dashboard/roles",
       icon: Shield,
     },
     {
       id: "companies",
       label: "Companies",
-      path: "/admin/companies",
+      path: "/admin/dashboard/companies",
       icon: Building2,
     },
     {
       id: "logs",
       label: "System Logs",
-      path: "/admin/logs",
+      path: "/admin/dashboard/logs",
       icon: FileText,
     },
     {
-      id: "settings",
-      label: "System Settings",
-      path: "/admin/settings",
-      icon: UserCog,
+      id: "agents",
+      label: "Agents",
+      path: "/admin/dashboard/agents",
+      icon: UserCircle,
+    },
+    {
+      id: "transaction",
+      label: "System Transaction",
+      path: "/admin/dashboard/transaction",
+      icon: ArrowLeftRight,
+    },
+    {
+      id: "message",
+      label: "Message",
+      path: "/admin/dashboard/message",
+      icon: MessageCircle,
     },
   ],
 };

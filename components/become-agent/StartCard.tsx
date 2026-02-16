@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Skeleton } from "../ui/Skeleton";
 
 const BLOCKED = ["submitted", "under_review", "approved", "suspended"];
 
@@ -15,13 +16,13 @@ export default function StartCard() {
   useEffect(() => {
     api
       .get("/api/agent-applications/me")
-      .then((res) => setApp(res.data))
+      .then((res) => setApp(res.data.application))
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return null;
+  // if (loading) return null;
 
-  const status = app?.application?.status;
+  const status = app?.status;
   const isBlocked = BLOCKED.includes(status);
 
   const handleClick = async () => {
@@ -42,9 +43,18 @@ export default function StartCard() {
     }
   };
 
+  if(loading){
+    return (
+      <div className='flex flex-col justify-center items-center gap-6 mt-15 shadow p-6'>
+        <Skeleton className="w-50 h-3" />
+        <Skeleton className="w-175 h-12" />
+    </div>
+    )
+  }
+
   return (
     <div className="bg-white rounded-2xl p-8 shadow text-center space-y-4">
-      <p className="text-gray-600">Ready to start your verification?</p>
+      <p className="text-gray-600">{status !== "submitted" && "Ready to start your verification?"}</p>
 
       <button
         disabled={isBlocked}

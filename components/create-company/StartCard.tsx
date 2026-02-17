@@ -1,0 +1,88 @@
+"use client";
+
+import { api } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Skeleton } from "../ui/Skeleton";
+import { createCompanyApplication } from "@/lib/companyApplication";
+
+const BLOCKED = ["submitted", "under_review", "approved", "suspended"];
+
+export default function StartCard() {
+  const router = useRouter();
+  const [app, setApp] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api
+      .get("/api/company-applications/me")
+      .then((res) => setApp(res.data.application))
+      .finally(() => setLoading(false));
+  }, []);
+  
+
+  const status = app?.status;
+  const isBlocked = BLOCKED.includes(status);
+
+  const handleClick = async () => {
+    try {
+      if (app) {
+        if (isBlocked) {
+          toast(`Application already ${status.replace("_", " ")}`);
+          return;
+        }
+        router.push(`/account/company-application?app=${app._id}`);
+        return;
+      }
+
+      // Create new company application if none exists
+      const res = await createCompanyApplication();
+      console.log(res);
+      router.push(`/account/company-application?app=${res.application._id}`);
+    } catch (error: any) {
+      console.log(error?.response)
+      toast(error?.response?.data?.message || "Failed to start application");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center gap-6 mt-10 shadow p-6 rounded-xl bg-white">
+        <Skeleton className="w-50 h-3" />
+        <Skeleton className="w-175 h-12" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-2xl p-8 shadow text-center space-y-4">
+      <p className="text-gray-600">
+        {status !== "submitted" && "Ready to start your company verification?"}
+      </p>
+
+      <button
+        disabled={isBlocked}
+        onClick={handleClick}
+        className={`
+          w-full py-4 rounded-xl font-medium text-white
+          transition-all
+          ${isBlocked ? "bg-gray-400 cursor-not-allowed" : "bg-black hover:scale-[1.02]"}
+        `}
+      >
+        {!app && "Start Application"}
+        {status === "draft" && "Continue Application"}
+        {status === "submitted" && "Submitted"}
+        {status === "under_review" && "Under Review"}
+        {status === "approved" && "Approved"}
+        {status === "rejected" && "Start New Application"}
+      </button>
+
+      {isBlocked && (
+        <p className="text-xs text-gray-400">
+          You can only have one active company application at a time.
+        </p>
+      )}
+    </div>
+  );
+}

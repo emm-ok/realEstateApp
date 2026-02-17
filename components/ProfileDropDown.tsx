@@ -7,8 +7,15 @@ import { FolderArchive, Settings, User, UserCheck2Icon } from "lucide-react";
 import Help from "./Help";
 import Logout from "./Logout";
 
-const ProfileDropDown = ({ profileRef, initials, user, profileOpen, setProfileOpen, setRedirecting, confirm }) => {
-
+const ProfileDropDown = ({
+  profileRef,
+  initials,
+  user,
+  profileOpen,
+  setProfileOpen,
+  setRedirecting,
+  confirm,
+}) => {
   return (
     <div className="relative" ref={profileRef}>
       <button onClick={() => setProfileOpen((p) => !p)}>
@@ -31,7 +38,7 @@ const ProfileDropDown = ({ profileRef, initials, user, profileOpen, setProfileOp
             className="absolute right-0 bg-white mt-2 shadow-lg rounded-lg"
           >
             <Link
-              href="/account/settings/profile"
+              href="/account/settings/account"
               className="flex gap-2 p-4 hover:bg-gray-100"
             >
               <button>
@@ -56,19 +63,21 @@ const ProfileDropDown = ({ profileRef, initials, user, profileOpen, setProfileOp
             </Link>
             <div className="w-full h-[.1px] bg-gray-300 mb-2" />
             <Link
-              href="/account/settings/profile"
+              href="/account/settings/account"
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
             >
               <User size={18} />
               Profile
             </Link>
-            <Link
-              href="/account/become-agent"
-              className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100 rounded-full border border-gray-300"
-            >
-              <UserCheck2Icon size={18} />
-              Become an Agent
-            </Link>
+            {user.role === "user" && (
+              <Link
+                href="/account/become-agent"
+                className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100 rounded-full border border-gray-300"
+              >
+                <UserCheck2Icon size={18} />
+                Become an Agent
+              </Link>
+            )}
             <Link
               href="/account/collection"
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
@@ -78,7 +87,7 @@ const ProfileDropDown = ({ profileRef, initials, user, profileOpen, setProfileOp
             </Link>
             <Help />
             <Link
-              href="/account/settings/profile"
+              href="/account/settings/account"
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
             >
               <Settings size={18} />

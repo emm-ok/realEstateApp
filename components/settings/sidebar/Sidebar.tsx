@@ -1,87 +1,123 @@
 "use client";
 
-import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { settingsNav } from "@/config/settings.config";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-import { motion } from "framer-motion";
+import { settingsNav } from "@/config/settings.config";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { X } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export function Sidebar() {
+interface Props {
+  expanded: boolean;
+  setExpanded: (v: boolean) => void;
+  mobileOpen: boolean;
+  setMobileOpen: (v: boolean) => void;
+}
+
+export default function Sidebar({
+  expanded,
+  setExpanded,
+  mobileOpen,
+  setMobileOpen,
+}: Props) {
   const { user } = useAuth();
   const pathname = usePathname();
-  const [expanded, setExpanded] = useState(false);
 
-  const getInitials = (name = "") => {
-    const parts = name.trim().split(" ");
-    if (parts.length === 0) return "";
-    if (parts.length === 1) return parts[0][0]?.toUpperCase() || "";
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
-
-  const initials = getInitials(user?.name);
+  const initials = user?.name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
 
   const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(href + "/");
+    pathname === href || pathname.startsWith(href);
 
   return (
-    <motion.aside
-      // onMouseEnter={() => setExpanded(true)}
-      // onMouseLeave={() => setExpanded(false)}
-      onClick={() => setExpanded(!expanded)}
-      animate={{ width: expanded ? 260 : 64 }}
-      transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      className="fixed h-screen bg-gray-500/20 backdrop-blur-lg shadow-lg z-40 flex flex-col overflow-hidden m-2 rounded-xl"
-    >
-      {/* Header */}
-      <div
-        className={`flex items-center py-4 ${
-          expanded ? "justify-between px-4" : "justify-center"
-        }`}
+    <>
+      {/* Desktop */}
+      <motion.aside
+        onMouseEnter={() => setExpanded(true)}
+        onMouseLeave={() => setExpanded(false)}
+        animate={{ width: expanded ? 260 : 72 }}
+        transition={{ duration: 0.2 }}
+        className="hidden md:flex fixed top-0 left-0 h-screen bg-white dark:bg-neutral-900 border-r border-gray-300 z-50 flex-col"
       >
-        {expanded ? (
-          <X onClick={() => setExpanded(false)} />
-        ) : (
-          <Menu onClick={() => setExpanded(true)} />
+        {/* Header */}
+        <div className="h-14 flex items-center justify-center">
+          <Avatar className="w-9 h-9">
+            <AvatarImage src={user?.image || ""} />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 px-2 py-4 space-y-1">
+          {settingsNav.map((item) => (
+            <Link
+              key={item.id}
+              href={`/account/settings/${item.id}`}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2
+                ${
+                  isActive(`/account/settings/${item.id}`)
+                    ? "bg-gray-300/70"
+                    : "hover:bg-gray-100 dark:hover:bg-neutral-800"
+                }
+              `}
+            >
+              <item.icon size={20} />
+              {expanded && <span>{item.label}</span>}
+            </Link>
+          ))}
+        </nav>
+      </motion.aside>
+
+      {/* Mobile */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 bg-black/40 z-40"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+
+            <motion.aside
+              initial={{ x: -300 }}
+              animate={{ x: 0 }}
+              exit={{ x: -300 }}
+              className="fixed top-0 left-0 h-screen w-64 bg-white dark:bg-neutral-900 z-50"
+            >
+              <div className="h-14 px-4 flex items-center justify-between border-b border-gray-300">
+                <span className="font-semibold">Settings</span>
+                <X onClick={() => setMobileOpen(false)} />
+              </div>
+
+              <nav className="p-3 space-y-1">
+                {settingsNav.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/account/settings/${item.id}`}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800"
+                      ${
+                        isActive(`/account/settings/${item.id}`)
+                          ? "bg-gray-300/70"
+                          : "hover:bg-gray-100 dark:hover:bg-neutral-800"
+                      }
+              `}
+                  >
+                    <item.icon size={20} />
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+            </motion.aside>
+          </>
         )}
-        {expanded && <h2 className="text-lg font-bold">Settings</h2>}
-
-        {expanded && (
-          <Avatar className="w-10 h-10 font-bold">
-          <AvatarImage src={user?.image || ""} className="object-cover" />
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
-        )}
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex flex-col gap-1 px-2">
-        {settingsNav.map((item) => (
-          <Link
-            key={item.id}
-            href={`/account/settings/${item.id}`}
-            className={`group flex items-center rounded-md transition
-              ${expanded ? "gap-3 px-3 py-3 justify-start" : "justify-center py-3"}
-              ${
-                isActive(`/account/settings/${item.id}`)
-                  ? "bg-neutral-300 font-semibold"
-                  : "hover:bg-neutral-300"
-              }
-            `}
-          >
-            <item.icon size={20} />
-
-            {/* Label (completely removed when collapsed) */}
-            {expanded && (
-              <span className="whitespace-nowrap">
-                {item.label}
-              </span>
-            )}
-          </Link>
-        ))}
-      </nav>
-    </motion.aside>
+      </AnimatePresence>
+    </>
   );
 }

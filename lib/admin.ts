@@ -71,3 +71,64 @@ export const verifyCompany = async (id: string) => {
     apiError(error);
   }
 };
+
+
+
+export const getAllAgents = async() => {
+  try{
+    const res = await api.get(`/api/agents`);
+    return res.data;
+  } catch(error){
+    apiError(error)
+  }
+}
+export const getAgentsApplications = async() => {
+  try{
+    const res = await api.get(`/api/agent-applications`);
+    return res.data.applications;
+  } catch(error){
+    apiError(error);
+    return [];
+  }
+}
+export const getAgentById = async(agentId: string) => {
+  try{
+    const res = await api.get(`/api/agents${agentId}`);
+    return res.data;
+  } catch(error){
+    apiError(error)
+  }
+}
+
+export const suspendAgent = async(agentId: string) => {
+  try{
+    const res = await api.patch(`/api/agents${agentId}`);
+    return res.data;
+  } catch(error){
+    apiError(error)
+  }
+}
+
+export const approveAgentApplication = async (applicationId: string) => {
+  try {
+    const res = await api.patch(
+      `/api/agent-applications/${applicationId}/approve`
+    );
+    return res.data;
+  } catch (error) {
+    apiError(error);
+  }
+};
+
+export const rejectAgentApplication = async (applicationId: string, reason: string) => {
+  try {
+    const res = await api.patch(
+      `/api/agent-applications/${applicationId}/reject`,
+      { reason }
+    );
+    return res.data;
+  } catch (error) {
+    apiError(error);
+  }
+};
+

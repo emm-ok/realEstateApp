@@ -145,10 +145,6 @@ export default function ChangePassword() {
 
   return (
     <form onSubmit={submit}>
-      <h1 className="text-xl font-semibold mb-4">
-        Change Password
-      </h1>
-
       <div className="space-y-4">
         {renderInput("currentPassword", "Current Password")}
         {renderInput("newPassword", "New Password")}

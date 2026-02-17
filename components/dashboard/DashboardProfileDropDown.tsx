@@ -23,27 +23,27 @@ const DashboardProfileDropDown = ({
   confirm,
 }) => {
   return (
-    <div className="relative w-full z-50" ref={profileRef}>
-      <div onClick={() => setProfileOpen((p) => !p)} className="flex gap-2 cursor-pointer p-2 rounded-xl hover:bg-neutral-200">
-        <button>
-          <Avatar className="font-bold">
-            <AvatarImage
-              src={user?.image || ""}
-              alt={`${initials || ""}`}
-              className="w-full h-full object-cover"
-            />
-            <AvatarFallback className="p-2 shadow-md border border-gray-400">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-        </button>
+    <div className="relative w-full" ref={profileRef}>
+      <button
+        onClick={() => setProfileOpen(p => !p)}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition"
+      >
+        <Avatar className="w-8 h-8">
+          <AvatarImage src={user?.image || ""} />
+          <AvatarFallback>{initials}</AvatarFallback>
+        </Avatar>
 
-        <div>
-          <h2 className="font-bold text-sm">{formatFullName(user?.name)}</h2>
-          <h4 className="font-extralight text-xs">{user?.email}</h4>
+        <div className="hidden md:block text-left">
+          <p className="text-sm font-medium">
+            {formatFullName(user?.name)}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {user?.email}
+          </p>
         </div>
-        <ChevronDown />
-      </div>
+
+        <ChevronDown size={16} />
+      </button>
 
       <AnimatePresence>
         {profileOpen && (
@@ -51,7 +51,7 @@ const DashboardProfileDropDown = ({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute right-0 bg-white mt-2 shadow-lg rounded-lg w-max"
+            className="absolute right-0 bg-white mt-2 shadow-lg rounded-lg w-[200px]"
           >
             <div className="w-full h-[.1px] bg-gray-300 mb-2" />
             <Link
@@ -61,13 +61,15 @@ const DashboardProfileDropDown = ({
               <User size={18} />
               Profile
             </Link>
-            <Link
-              href="/account/become-agent"
-              className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100 rounded-full border border-gray-300"
-            >
-              <UserCheck2Icon size={18} />
-              Become an Agent
-            </Link>
+            {user.role === "user" && (
+              <Link
+                href="/account/become-agent"
+                className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100 rounded-full border border-gray-300"
+              >
+                <UserCheck2Icon size={18} />
+                Become an Agent
+              </Link>
+            )}
             <Link
               href="/account/collection"
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"

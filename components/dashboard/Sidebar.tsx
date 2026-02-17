@@ -25,12 +25,12 @@ export default function Sidebar() {
 
   return (
     <motion.aside
-      // onMouseEnter={() => setExpanded(true)}
-      // onMouseLeave={() => setExpanded(false)}
+      onMouseEnter={() => setExpanded(true)}
+      onMouseLeave={() => setExpanded(false)}
       onClick={() => setExpanded(!expanded)} // mobile
       animate={{ width: expanded ? 260 : 64 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      className="fixed h-screen z-50 bg-gray-500/20 backdrop-blur-lg shadow-lg flex flex-col justify-between overflow-hidden m-2"
+      className="fixed h-screen z-50 bg-gray-500/20 backdrop-blur-lg shadow-lg flex flex-col justify-between overflow-hidden"
     >
       {/* Logo */}
       <div className="">

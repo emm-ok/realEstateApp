@@ -305,7 +305,7 @@ const Navbar = () => {
               // </button>
               <Link
                 href="/login"
-                className="md:flex bg-none text-white md:bg-neutral-700 px-4 py-2 rounded-lg"
+                className="md:flex text-white bg-neutral-800 px-4 py-2 rounded"
               >
                 Login
               </Link>

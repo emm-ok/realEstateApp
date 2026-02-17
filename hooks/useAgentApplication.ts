@@ -22,8 +22,9 @@ export function useAgentApplication() {
   const router = useRouter();
 
   useEffect(() => {
-    api.get("/api/agent-applications/me")
-      .then(res => {
+    api
+      .get("/api/agent-applications/me")
+      .then((res) => {
         const data = res.data.application;
         setFormData({
           professional: {
@@ -52,8 +53,17 @@ export function useAgentApplication() {
       if (currentStep === 3) {
         if (localDocs.idCard) await uploadDocument("idCard", localDocs.idCard);
         if (localDocs.realEstateLicense)
-          await uploadDocument("realEstateLicense", localDocs.realEstateLicense);
+          await uploadDocument(
+            "realEstateLicense",
+            localDocs.realEstateLicense,
+          );
         if (localDocs.selfie) await uploadDocument("selfie", localDocs.selfie);
+
+        const refreshed = await api.get("/api/agent-applications/me");
+        setFormData((prev) => ({
+          ...prev,
+          documents: refreshed.data.application.documents,
+        }));
       }
 
       if (editReturnStep === 4) {
@@ -72,7 +82,7 @@ export function useAgentApplication() {
   };
 
   const back = () => {
-    setCurrentStep(s => Math.max(1, s - 1));
+    setCurrentStep((s) => Math.max(1, s - 1));
   };
 
   const goToStep = (step: number) => {
@@ -107,6 +117,5 @@ export function useAgentApplication() {
     goToStep,
   };
 }
-
 
 //   toast("Application submitted successfully.");

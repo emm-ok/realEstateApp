@@ -1,4 +1,5 @@
 import SettingCard from "@/components/SettingCard";
+import ChangePassword from "@/components/settings/sidebar/ChangePassword";
 
 export default function PasswordSection() {
   return (
@@ -6,11 +7,7 @@ export default function PasswordSection() {
       title="Password"
       description="Change your account password"
     >
-      <div className="flex gap-3">
-        <input type="password" placeholder="Current password" />
-        <input type="password" placeholder="New password" />
-        <button className="btn-primary">Update</button>
-      </div>
+      <ChangePassword />
     </SettingCard>
   );
 }

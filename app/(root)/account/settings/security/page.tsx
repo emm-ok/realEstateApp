@@ -1,11 +1,13 @@
 "use client";
 
-import PasswordSection from "./sections/PasswordSection";
-import TwoFactorSection from "./sections/TwoFactorSection";
-import SessionsSection from "./sections/SessionsSection";
 import AlertsSection from "./sections/AlertsSection";
-import DevicesSection from "./sections/DevicesSection";
 import DangerZone from "./sections/DangerZone";
+import DevicesSection from "./sections/DevicesSection";
+import PasswordSection from "./sections/PasswordSection";
+import SessionsSection from "./sections/SessionsSection";
+import TwoFactorSection from "./sections/TwoFactorSection";
+
+
 
 export default function SecurityPage() {
   return (

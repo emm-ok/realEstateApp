@@ -23,6 +23,7 @@ export default function StartCard() {
   // if (loading) return null;
 
   const status = app?.status;
+  console.log(app?.status)
   const isBlocked = BLOCKED.includes(status);
 
   const handleClick = async () => {

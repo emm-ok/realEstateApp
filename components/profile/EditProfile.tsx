@@ -245,8 +245,8 @@ const EditProfilePage = () => {
               onChange={handleChange}
               rows={4}
               className="w-full mt-1 rounded-xl border border-gray-300 p-4 text-sm
-                text-neutral-800
-                focus:ring-2 focus:ring-black dark:focus:ring-white"
+                text-neutral-800 focus:outline-0
+                focus:ring-1 focus:ring-black dark:focus:ring-white"
             />
           </div>
 

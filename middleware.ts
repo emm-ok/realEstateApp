@@ -15,6 +15,11 @@ export function middleware(req: NextRequest) {
 
 export const config = {
     matcher: [
-        "/account/:path*",
+        "/dashboard/:path*",
+        "/agent-application/:path*",
+        "/become-agent/:path*",
+        "/company-application/:path*",
+        "/create-company/:path*",
+        "/settings/:path*",
     ]
 }

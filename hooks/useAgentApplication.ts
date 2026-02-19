@@ -95,7 +95,7 @@ export function useAgentApplication() {
   //   setSubmitLoading(true);
   //   try {
   //     await submitApplication();
-  //     router.push("/account/become-agent/success");
+  //     router.push("/become-agent/success");
   //   } finally {
   //     setSubmitLoading(false);
   //   }

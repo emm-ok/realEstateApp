@@ -33,12 +33,12 @@ export default function StartCard() {
           toast(`Application already ${status.replace("_", " ")}`);
           return;
         }
-        router.push(`/account/agent-application?app=${app._id}`);
+        router.push(`/agent-application?app=${app._id}`);
         return;
       }
 
       const res = await api.post("/api/agent-applications");
-      router.push(`/account/agent-application?app=${res.data.application._id}`);
+      router.push(`/agent-application?app=${res.data.application._id}`);
     } catch (error) {
       toast(error?.response?.data?.message);
     }

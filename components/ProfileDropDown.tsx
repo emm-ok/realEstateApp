@@ -38,7 +38,7 @@ const ProfileDropDown = ({
             className="absolute right-0 bg-white mt-2 shadow-lg rounded-lg"
           >
             <Link
-              href="/account/settings/account"
+              href="/settings/account"
               className="flex gap-2 p-4 hover:bg-gray-100"
             >
               <button>
@@ -63,7 +63,7 @@ const ProfileDropDown = ({
             </Link>
             <div className="w-full h-[.1px] bg-gray-300 mb-2" />
             <Link
-              href="/account/settings/account"
+              href="/settings/account"
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
             >
               <User size={18} />
@@ -71,7 +71,7 @@ const ProfileDropDown = ({
             </Link>
             {user.role === "user" && (
               <Link
-                href="/account/become-agent"
+                href="/become-agent"
                 className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100 rounded-full border border-gray-300"
               >
                 <UserCheck2Icon size={18} />
@@ -79,7 +79,7 @@ const ProfileDropDown = ({
               </Link>
             )}
             <Link
-              href="/account/collection"
+              href="/collection"
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
             >
               <FolderArchive size={18} />
@@ -87,7 +87,7 @@ const ProfileDropDown = ({
             </Link>
             <Help />
             <Link
-              href="/account/settings/account"
+              href="/settings/account"
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
             >
               <Settings size={18} />

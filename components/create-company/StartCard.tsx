@@ -32,14 +32,14 @@ export default function StartCard() {
           toast(`Application already ${status.replace("_", " ")}`);
           return;
         }
-        router.push(`/account/company-application?app=${app._id}`);
+        router.push(`/company-application?app=${app._id}`);
         return;
       }
 
       // Create new company application if none exists
       const res = await createCompanyApplication();
       console.log(res);
-      router.push(`/account/company-application?app=${res.application._id}`);
+      router.push(`/company-application?app=${res.application._id}`);
     } catch (error: any) {
       console.log(error?.response)
       toast(error?.response?.data?.message || "Failed to start application");

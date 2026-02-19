@@ -55,7 +55,7 @@ const DashboardProfileDropDown = ({
           >
             <div className="w-full h-[.1px] bg-gray-300 mb-2" />
             <Link
-              href="/account/settings/profile"
+              href="/settings/profile"
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
             >
               <User size={18} />
@@ -63,7 +63,7 @@ const DashboardProfileDropDown = ({
             </Link>
             {user.role === "user" && (
               <Link
-                href="/account/become-agent"
+                href="/become-agent"
                 className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100 rounded-full border border-gray-300"
               >
                 <UserCheck2Icon size={18} />
@@ -71,7 +71,7 @@ const DashboardProfileDropDown = ({
               </Link>
             )}
             <Link
-              href="/account/collection"
+              href="/collection"
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
             >
               <FolderArchive size={18} />
@@ -79,7 +79,7 @@ const DashboardProfileDropDown = ({
             </Link>
             <Help />
             <Link
-              href="/account/settings/profile"
+              href="/settings/profile"
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
             >
               <Settings size={18} />

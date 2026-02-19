@@ -56,10 +56,10 @@ export default function Sidebar({
           {settingsNav.map((item) => (
             <Link
               key={item.id}
-              href={`/account/settings/${item.id}`}
+              href={`/settings/${item.id}`}
               className={`flex items-center gap-3 rounded-lg px-3 py-2
                 ${
-                  isActive(`/account/settings/${item.id}`)
+                  isActive(`/settings/${item.id}`)
                     ? "bg-gray-300/70"
                     : "hover:bg-gray-100 dark:hover:bg-neutral-800"
                 }
@@ -99,11 +99,11 @@ export default function Sidebar({
                 {settingsNav.map((item) => (
                   <Link
                     key={item.id}
-                    href={`/account/settings/${item.id}`}
+                    href={`/settings/${item.id}`}
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800"
                       ${
-                        isActive(`/account/settings/${item.id}`)
+                        isActive(`/settings/${item.id}`)
                           ? "bg-gray-300/70"
                           : "hover:bg-gray-100 dark:hover:bg-neutral-800"
                       }

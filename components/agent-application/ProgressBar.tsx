@@ -1,5 +1,5 @@
 export default function ProgressBar({ currentStep }: { currentStep: number }) {
-  const total = 4;
+  const total = 5;
   const percent = (currentStep / total) * 100;
 
   return (

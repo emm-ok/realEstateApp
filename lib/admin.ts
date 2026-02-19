@@ -132,3 +132,36 @@ export const rejectAgentApplication = async (applicationId: string, reason: stri
   }
 };
 
+
+export const getCompanyApplications = async() => {
+  try{
+    const res = await api.get(`/api/company-applications`);
+    return res.data.applications;
+  } catch(error){
+    apiError(error);
+    return [];
+  }
+}
+
+export const approveCompanyApplication = async (applicationId: string) => {
+  try {
+    const res = await api.patch(
+      `/api/company-applications/${applicationId}/approve`
+    );
+    return res.data;
+  } catch (error) {
+    apiError(error);
+  }
+};
+
+export const rejectCompanyApplication = async (applicationId: string, reason: string) => {
+  try {
+    const res = await api.patch(
+      `/api/agent-applications/${applicationId}/reject`,
+      { reason }
+    );
+    return res.data;
+  } catch (error) {
+    apiError(error);
+  }
+};

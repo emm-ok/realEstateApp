@@ -10,6 +10,7 @@ import { steps } from "@/config/companyStepsConfig";
 import Stepper from "./Stepper";
 import Slide from "../agent-application/Slide";
 import StepRenderer from "./StepRenderer";
+import ProgressBar from "../agent-application/ProgressBar";
 
 export default function CompanyForm() {
   const app = useCompanyApplication();
@@ -25,9 +26,10 @@ export default function CompanyForm() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow rounded">
-      <Stepper step={app.currentStep} />
-
       <h1 className="text-xl font-bold mb-4">{step.title}</h1>
+      <Stepper step={app.currentStep} />
+      <ProgressBar currentStep={app.currentStep} />
+
 
       <Slide>
         <StepRenderer
@@ -59,7 +61,7 @@ export default function CompanyForm() {
                   try {
                     await submitCompanyApplication(app.formData);
                     toast("Application submitted successfully.");
-                    router.push("/account/company-application/success");
+                    router.push("/company-application/success");
                   } finally {
                     app.setSubmitLoading(false);
                   }

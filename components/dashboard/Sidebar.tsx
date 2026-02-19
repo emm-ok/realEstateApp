@@ -30,7 +30,7 @@ export default function Sidebar() {
       onClick={() => setExpanded(!expanded)} // mobile
       animate={{ width: expanded ? 260 : 64 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      className="fixed h-screen z-50 bg-gray-500/20 backdrop-blur-lg shadow-lg flex flex-col justify-between overflow-hidden"
+      className="fixed h-screen z-50 bg-white shadow-lg flex flex-col justify-between overflow-hidden"
     >
       {/* Logo */}
       <div className="">
@@ -101,13 +101,13 @@ export default function Sidebar() {
       {/* Bottom Actions */}
       <div className="flex flex-col gap-1 px-2 pb-4">
         <Link
-          href={`/account/settings/profile`}
+          href={`/settings/profile`}
           className={`flex items-center rounded-md transition
             ${
               expanded ? "gap-3 px-3 py-3 justify-start" : "justify-center py-3"
             }
             ${
-              isActive(`/account/settings/profile`)
+              isActive(`/settings/profile`)
                 ? "bg-neutral-300 font-semibold"
                 : "hover:bg-gray-200"
             }

@@ -66,11 +66,7 @@ export function useCompanyApplication() {
     setStepLoading(true);
 
     try {
-      const error = validateCompanyStep(
-        currentStep,
-        formData,
-        localDocs,
-      );
+      const error = validateCompanyStep(currentStep, formData, localDocs);
       if (error) return toast.error(error);
 
       // Upload documents on verification step
@@ -85,10 +81,7 @@ export function useCompanyApplication() {
           await uploadDocument("license", localDocs.license);
 
         if (localDocs.ownerIdCard)
-          await uploadDocument(
-            "ownerIdCard",
-            localDocs.ownerIdCard,
-          );
+          await uploadDocument("ownerIdCard", localDocs.ownerIdCard);
 
         const refreshed = await getMyCompanyApplication();
         setFormData((prev: any) => ({
@@ -106,7 +99,12 @@ export function useCompanyApplication() {
       }
 
       const nextStep = currentStep + 1;
-      await updateDraft({ ...formData, currentStep: nextStep });
+      await updateDraft({
+        company: formData.company, // must be object
+        documents: formData.documents,
+        currentStep: nextStep,
+      });
+
       setCurrentStep(nextStep);
     } finally {
       setStepLoading(false);
@@ -131,7 +129,7 @@ export function useCompanyApplication() {
     try {
       await submitCompanyApplication();
       toast.success("Company application submitted");
-      router.push("/account/company/success");
+      router.push("/company/success");
     } finally {
       setSubmitLoading(false);
     }

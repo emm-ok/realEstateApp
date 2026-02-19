@@ -126,11 +126,11 @@ const otherThree = [
     name: "Account",
     href: "/account",
     subLink: [
-      { name: "Login / Sign Up", href: "/account/login-signup" },
-      { name: "My Profile", href: "/account/my-profile" },
-      { name: "My Listings", href: "/account/my-listings" },
-      { name: "Messages / Chats", href: "/account/messages-chat" },
-      { name: "Notifications", href: "/account/notifications" },
+      { name: "Login / Sign Up", href: "/login-signup" },
+      { name: "My Profile", href: "/my-profile" },
+      { name: "My Listings", href: "/my-listings" },
+      { name: "Messages / Chats", href: "/messages-chat" },
+      { name: "Notifications", href: "/notifications" },
     ],
   },
   {

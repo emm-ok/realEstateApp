@@ -39,7 +39,7 @@ export default function SuccessPage() {
           </button>
 
           <button
-            onClick={() => router.push("/account/settings/profile")}
+            onClick={() => router.push("/settings/profile")}
             className="px-5 py-2 rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition"
           >
             My Account

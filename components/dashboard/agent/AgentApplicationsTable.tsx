@@ -7,7 +7,6 @@ import {
   getAgentsApplications,
   rejectAgentApplication,
 } from "@/lib/admin";
-import Input from "@/components/ui/Input";
 
 interface AgentApplication {
   _id: string;
@@ -30,7 +29,6 @@ export default function AgentApplicationsPage() {
   const fetchApplications = async () => {
     setLoading(true);
     const data = await getAgentsApplications();
-    console.log(data);
     setApplications(data);
     setLoading(false);
   };

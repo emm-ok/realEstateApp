@@ -82,7 +82,7 @@ export default function CompaniesDashboard() {
           title="Suspended"
           value={applications.filter((c) => c.status === "suspended").length}
         />
-        <Kpi title="Monthly Volume" value="₦18.4M" />
+        <Kpi title="Monthly Volume" value="$18.4M" />
       </div>
       {/* Header */}
       <div>

@@ -27,9 +27,9 @@ export const updateUserById = async (id: string) => {
   }
 };
 
-export const suspendUserById = async (id: string) => {
+export const suspendUserById = async (id: string, suspend: boolean) => {
   try {
-    const res = await api.patch(`/api/users/${id}/suspend`);
+    const res = await api.patch(`/api/users/${id}/suspend`, { suspend });
     return res.data;
   } catch (error) {
     apiError(error);
@@ -82,7 +82,7 @@ export const getAllAgents = async() => {
     apiError(error)
   }
 }
-export const getAgentsApplications = async() => {
+export const getAgentApplications = async() => {
   try{
     const res = await api.get(`/api/agent-applications`);
     return res.data.applications;
@@ -91,9 +91,10 @@ export const getAgentsApplications = async() => {
     return [];
   }
 }
-export const getAgentById = async(agentId: string) => {
+
+export const getAgentApplicationById = async(agentId: string) => {
   try{
-    const res = await api.get(`/api/agents${agentId}`);
+    const res = await api.get(`/api/agent-applications/${agentId}`);
     return res.data;
   } catch(error){
     apiError(error)
@@ -102,7 +103,7 @@ export const getAgentById = async(agentId: string) => {
 
 export const suspendAgent = async(agentId: string) => {
   try{
-    const res = await api.patch(`/api/agents${agentId}`);
+    const res = await api.patch(`/api/agents/${agentId}/suspend`);
     return res.data;
   } catch(error){
     apiError(error)
@@ -140,6 +141,15 @@ export const getCompanyApplications = async() => {
   } catch(error){
     apiError(error);
     return [];
+  }
+}
+
+export const getCompanyApplicationById = async(companyApplicationId: string) => {
+  try{
+    const res = await api.get(`/api/company-applications/${companyApplicationId}`);
+    return res.data;
+  } catch(error){
+    apiError(error)
   }
 }
 

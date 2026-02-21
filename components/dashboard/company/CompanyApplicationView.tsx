@@ -7,6 +7,7 @@ import {
   getCompanyApplications,
   rejectCompanyApplication,
 } from "@/lib/admin";
+import Link from "next/link";
 
 interface CompanyApplication {
   _id: string;
@@ -94,9 +95,7 @@ export default function CompanyApplicationsPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-20">
-          Loading company applications...
-        </div>
+        <div className="text-center py-20">Loading company applications...</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -106,56 +105,19 @@ export default function CompanyApplicationsPage() {
                 <th className="px-4 py-2">Email</th>
                 <th className="px-4 py-2">Status</th>
                 <th className="px-4 py-2">Applied At</th>
-                <th className="px-4 py-2">Actions</th>
-                <th className="px-4 py-2">Reason</th>
+                <th className="px-4 py-2">View</th>
               </tr>
             </thead>
 
             <tbody>
               {filteredApplications.map((app) => (
-                <tr
-                  key={app._id}
-                  className="border-b border-gray-200"
-                >
-                  <td className="px-4 py-2">
-                    {app.company?.name || "—"}
-                  </td>
+                <tr key={app._id} className="border-b border-gray-200">
+                  <td className="px-4 py-2">{app.company?.name || "—"}</td>
 
-                  <td className="px-4 py-2">
-                    {app.company?.email || "—"}
-                  </td>
-
-                  <td className="px-4 py-2 capitalize">
-                    {app.status}
-                  </td>
-
-                  <td className="px-4 py-2">
-                    {new Date(app.createdAt).toLocaleDateString()}
-                  </td>
+                  <td className="px-4 py-2">{app.company?.email || "—"}</td>
 
                   <td className="px-4 py-2 flex gap-2">
-                    {app.status === "submitted" ? (
-                      <>
-                        <button
-                          onClick={() => handleApprove(app._id)}
-                          className="bg-emerald-600 text-white px-3 py-1 rounded-md"
-                        >
-                          Approve
-                        </button>
-
-                        <button
-                          onClick={() =>
-                            handleReject(
-                              app._id,
-                              reasons[app._id],
-                            )
-                          }
-                          className="bg-rose-600 text-white px-3 py-1 rounded-md"
-                        >
-                          Reject
-                        </button>
-                      </>
-                    ) : app.status === "approved" ? (
+                    {app.status === "approved" ? (
                       <span className="text-emerald-600 font-medium">
                         Approved
                       </span>
@@ -163,24 +125,18 @@ export default function CompanyApplicationsPage() {
                       <span className="text-rose-600 font-medium">
                         Rejected
                       </span>
-                    ) : null}
+                    ) : (
+                      app.status
+                    )}
                   </td>
 
                   <td className="px-4 py-2">
-                    {app.status === "submitted" && (
-                      <input
-                        type="text"
-                        value={reasons[app._id] || ""}
-                        onChange={(e) =>
-                          setReasons((prev) => ({
-                            ...prev,
-                            [app._id]: e.target.value,
-                          }))
-                        }
-                        placeholder="Reason..."
-                        className="rounded-full px-4 py-1 border border-gray-300"
-                      />
-                    )}
+                    {new Date(app.createdAt).toLocaleDateString()}
+                  </td>
+                  <td>
+                    <Link href={`/dashboard/admin/companies/company-applications/${app._id}`} className="bg-neutral-800 text-white px-3 py-1 rounded-md">
+                      View Details
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -202,3 +158,42 @@ export default function CompanyApplicationsPage() {
     </div>
   );
 }
+
+
+
+{/* <td className="px-4 py-2">
+  {app.status === "submitted" && (
+    <input
+      type="text"
+      value={reasons[app._id] || ""}
+      onChange={(e) =>
+        setReasons((prev) => ({
+          ...prev,
+          [app._id]: e.target.value,
+        }))
+      }
+      placeholder="Reason..."
+      className="rounded-full px-4 py-1 border border-gray-300"
+    />
+  )}
+</td>; */}
+
+// <>
+//   <
+//     onClick={() => handleApprove(app._id)}
+//     className="bg-emerald-600 text-white px-3 py-1 rounded-md"
+//   >
+//     Approve
+
+//   <button
+//     onClick={() =>
+//       handleReject(
+//         app._id,
+//         reasons[app._id],
+//       )
+//     }
+//     className="bg-rose-600 text-white px-3 py-1 rounded-md"
+//   >
+//     Reject
+//   </button>
+// </>

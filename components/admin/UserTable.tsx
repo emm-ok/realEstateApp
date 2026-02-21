@@ -18,8 +18,6 @@ const UserTable = ({ user }) => {
       setLoading(false);
     })();
   }, []);
-  console.log(users)
-
   const filteredUsers = users.filter((u) =>
     `${u.name} ${u.email}`.toLowerCase().includes(search.toLowerCase())
   );
@@ -72,7 +70,7 @@ const UserTable = ({ user }) => {
                 <AdminUserRow key={user._id} user={user} />
               ))}
           </tbody>
-        </table>
+        </table>      
       </div>
     </div>
   );

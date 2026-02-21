@@ -65,7 +65,6 @@ export default function ChangePassword() {
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
       });
-      console.log(res.message);
       toast.success(res.message || "Password updated");
 
       setValues({

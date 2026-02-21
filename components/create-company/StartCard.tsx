@@ -38,10 +38,8 @@ export default function StartCard() {
 
       // Create new company application if none exists
       const res = await createCompanyApplication();
-      console.log(res);
       router.push(`/company-application?app=${res.application._id}`);
     } catch (error: any) {
-      console.log(error?.response)
       toast(error?.response?.data?.message || "Failed to start application");
     }
   };

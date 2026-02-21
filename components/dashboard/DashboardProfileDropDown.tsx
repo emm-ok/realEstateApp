@@ -23,7 +23,7 @@ const DashboardProfileDropDown = ({
   confirm,
 }) => {
   return (
-    <div className="relative w-full" ref={profileRef}>
+    <div className="relative w-full z-40" ref={profileRef}>
       <button
         onClick={() => setProfileOpen(p => !p)}
         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition"

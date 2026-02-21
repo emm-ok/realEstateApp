@@ -3,12 +3,12 @@ import Topbar from "@/components/admin/Topbar";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { useAuth } from "@/context/AuthContext";
 
-export default function DashboardLayout({ children }) {
-  const { user } = useAuth();;
+export default function AdminDashboardLayout({ children }) {
+  const { user } = useAuth();
   // if(user?.role !== "admin") return;
 
   return (
-    <div className="flex h-screen bg-gray-50">
+      <div className="flex h-screen bg-gray-50">
       <Sidebar />
 
       {/* Main content */}

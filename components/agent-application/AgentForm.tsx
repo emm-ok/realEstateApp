@@ -27,7 +27,7 @@ export default function AgentForm() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow rounded">
-      <ProgressBar currentStep={app.currentStep} />
+      <ProgressBar total={steps.length} currentStep={app.currentStep} />
       <h1 className="text-xl font-bold mb-4">{step.title}</h1>
       <Slide>
         <StepRenderer

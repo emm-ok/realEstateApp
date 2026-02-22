@@ -28,7 +28,7 @@ export default function CompanyForm() {
     <div className="max-w-2xl mx-auto p-6 bg-white shadow rounded">
       <h1 className="text-xl font-bold mb-4">{step.title}</h1>
       <Stepper step={app.currentStep} />
-      <ProgressBar currentStep={app.currentStep} />
+      <ProgressBar total={steps.length} currentStep={app.currentStep} />
 
 
       <Slide>

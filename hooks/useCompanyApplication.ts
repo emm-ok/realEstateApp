@@ -7,7 +7,6 @@ import {
   uploadDocument,
   deleteDocument,
   submitCompanyApplication,
-  archiveApplication,
 } from "@/lib/companyApplication";
 import { toast } from "sonner";
 import { validateCompanyStep } from "@/lib/validation/companyApplication";
@@ -135,19 +134,6 @@ export function useCompanyApplication() {
     }
   };
 
-  /* ---------------- ARCHIVE ---------------- */
-  const archive = async () => {
-    try {
-      await archiveApplication();
-      toast.success("Draft archived");
-      setFormData(null);
-      setCurrentStep(1);
-      setLocalDocs({});
-    } catch {
-      toast.error("Failed to archive");
-    }
-  };
-
   /* ---------------- DELETE DOC ---------------- */
   const removeDocument = async (type: string) => {
     try {
@@ -173,7 +159,6 @@ export function useCompanyApplication() {
     next,
     back,
     submit,
-    archive,
     localDocs,
     setLocalDocs,
     goToStep,

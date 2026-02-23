@@ -192,7 +192,7 @@ export function useListingApplication(listingId?: string) {
     try {
       await submitListingApplication(currentListingId);
       toast.success("Listing application submitted");
-      router.push("/listings/success");
+      router.push("/create-listing/listing-application/success");
     } catch {
       toast.error("Failed to submit listing");
     } finally {

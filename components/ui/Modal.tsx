@@ -60,11 +60,11 @@ export default function Modal({ open, onClose, children }: ModalProps) {
                 shadow-2xl
                 flex
                 flex-col
-                max-h-[95vh]
+                h-full
               "
             >
               {/* HEADER */}
-              <div className="flex items-center justify-between px-6 py-4 border-b flex-shrink-0">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-300 flex-shrink-0">
                 <h2 className="text-lg font-semibold">Review Listing</h2>
                 <button
                   onClick={onClose}

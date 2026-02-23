@@ -21,7 +21,7 @@ export default function Step5Review({ formData, goToStep }: any) {
   } = formData;
 
   return (
-    <div className="grid grid-cols-2 gap-4 space-y-6 overflow-y-auto max-h-[70vh] p-2 sm:p-4">
+    <div className="flex flex-col space-y-6 overflow-y-auto max-h-[70vh] p-2 sm:p-4">
       {/* BASIC INFO */}
       <Section title="Basic Information" onEdit={() => goToStep(1)}>
         <Item label="Title" value={title} />
@@ -97,7 +97,7 @@ export default function Step5Review({ formData, goToStep }: any) {
 // --- Section Component ---
 function Section({ title, children, onEdit }: any) {
   return (
-    <div className="border rounded-lg p-4 bg-gray-50">
+    <div className="border border-gray-300 shadow-md rounded-lg p-4 bg-gray-50">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-lg">{title}</h3>
         <button

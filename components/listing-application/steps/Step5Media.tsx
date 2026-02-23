@@ -50,16 +50,19 @@ export default function Step5Media({
                   alt="listing"
                   className="rounded-xl object-cover h-32 w-full"
                 />
-                <button
+                <div className="flex justify-between mt-4">
+                  <div />
+                  <button
                   onClick={() =>
                     isLocal
                       ? removeLocalMedia(index, "images")
                       : removeUploadedMedia(img._id, "images")
                   }
-                  className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 rounded"
+                  className="bg-red-500 text-xs px-2 rounded"
                 >
-                  ✕
+                  ✕ Remove
                 </button>
+                </div>
               </div>
             );
           })}

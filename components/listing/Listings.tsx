@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getAllApprovedListings } from "@/lib/listing";
 import { toast } from "sonner";
 import FilterSection from "@/components/listing/FilterSection";
@@ -8,13 +8,15 @@ import ListingCard from "./ListingCard";
 import Loader from "../ui/Loader";
 
 export default function Listings() {
-  const [listings, setListings] = useState([]);
+  const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Filters
   const [search, setSearch] = useState("");
-  const [maxPrice, setMaxPrice] = useState(null);
-  const [minPrice, setMinPrice] = useState(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [minPrice, setMinPrice] = useState<number | null>(null);
   const [propertyType, setPropertyType] = useState("any");
-  const [bedRoom, setBedRoom] = useState(null);
+  const [bedRoom, setBedRoom] = useState<number | null>(null);
 
   const getAllListings = async () => {
     try {
@@ -31,13 +33,42 @@ export default function Listings() {
     getAllListings();
   }, []);
 
+  // ✅ Optimized Filtering
+  const filteredListings = useMemo(() => {
+    return listings.filter((listing) => {
+      const matchesSearch =
+        listing.title?.toLowerCase().includes(search.toLowerCase()) ||
+        listing.location?.city?.toLowerCase().includes(search.toLowerCase()) ||
+        listing.location?.address?.toLowerCase().includes(search.toLowerCase());
+
+      const matchesMinPrice =
+        minPrice === null || listing.price >= minPrice;
+
+      const matchesMaxPrice =
+        maxPrice === null || listing.price <= maxPrice;
+
+      const matchesType =
+        propertyType === "any" ||
+        listing.propertyType?.toLowerCase() === propertyType.toLowerCase();
+
+      const matchesBedroom =
+        bedRoom === null || listing.bedrooms >= bedRoom;
+
+      return (
+        matchesSearch &&
+        matchesMinPrice &&
+        matchesMaxPrice &&
+        matchesType &&
+        matchesBedroom
+      );
+    });
+  }, [listings, search, minPrice, maxPrice, propertyType, bedRoom]);
+
   if (loading) return <Loader text="Loading listings..." />;
 
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
-        
-        {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900">
             Explore Listings
@@ -48,10 +79,8 @@ export default function Listings() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          {/* Sidebar */}
           <div className="lg:col-span-3">
-            <FilterSection 
+            <FilterSection
               search={search}
               setSearch={setSearch}
               minPrice={minPrice}
@@ -59,32 +88,22 @@ export default function Listings() {
               setMinPrice={setMinPrice}
               setMaxPrice={setMaxPrice}
               setPropertyType={setPropertyType}
-              setBedRoom={setBedRoom} 
+              setBedRoom={setBedRoom}
             />
           </div>
 
-          {/* Properties Grid */}
           <section className="lg:col-span-9">
-            {properties.length === 0 ? (
+            {filteredListings.length === 0 ? (
               <div className="bg-white rounded-xl shadow-sm p-10 text-center">
                 <p className="text-gray-500">
-                  No listings available at the moment.
+                  No listings match your filters.
                 </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {listings.map((listing) => (
+                {filteredListings.map((listing) => (
                   <ListingCard key={listing._id} listing={listing} />
                 ))}
-              </div>
-            )}
-
-            {/* Pagination */}
-            {properties.length > 0 && (
-              <div className="flex justify-center mt-10">
-                <button className="px-6 py-3 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 transition text-sm font-medium">
-                  Load More
-                </button>
               </div>
             )}
           </section>

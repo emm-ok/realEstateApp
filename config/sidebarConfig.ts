@@ -13,6 +13,7 @@ import {
   MessageCircle,
   ArrowLeftRight,
   UserCircle,
+  List,
 } from "lucide-react";
 
 export const SIDEBAR_NAVS = {
@@ -151,6 +152,12 @@ export const SIDEBAR_NAVS = {
       label: "Agents",
       path: "/dashboard/admin/agents",
       icon: UserCircle,
+    },
+    {
+      id: "listings",
+      label: "Listings",
+      path: "/dashboard/admin/listings",
+      icon: List,
     },
     {
       id: "transaction",

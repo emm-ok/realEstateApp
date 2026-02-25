@@ -1,3 +1,4 @@
+import { cloudName } from "@/utils";
 import Image from "next/image";
 
 export default function Step5Review({ formData, goToStep }: any) {
@@ -63,7 +64,7 @@ export default function Step5Review({ formData, goToStep }: any) {
               {images.map((img: any) => (
                 <Image
                   key={img._id}
-                  src={`https://res.cloudinary.com/dyliae7ie/image/upload/w_300/${img.public_id}`}
+                  src={`https://res.cloudinary.com/${cloudName}/image/upload/w_300/${img.public_id}`}
                   width={500}
                   height={300}
                   alt="listing"

@@ -1,115 +1,67 @@
 import { api, apiError } from "./api"
 
-export const createListingApplication = async() => {
-    try{
-        const res = await api.post("/api/listing-applications");
-        return res.data;
-    } catch(error){
-        apiError(error);
-    }
-}
-export const getMyListingApplications = async() => {
-    try{
-        const res = await api.get("/api/listing-applications/me");
-        return res.data;
-    } catch(error){
-        apiError(error);
-    }
-}
-export const getSingleListingApplication = async(listingId: string) => {
-    try{
-        const res = await api.get(`/api/listing-applications/me/${listingId}`);
-        return res.data;
-    } catch(error){
-        apiError(error);
-    }
-}
-export const updateListingApplicationDraft = async(listingId: string, data: any) => {
-    try{
-        const res = await api.put(`/api/listing-applications/me/${listingId}`, data);
-        return res.data;
-    } catch(error){
-        apiError(error);
-    }
-}
-export const submitListingApplication = async(listingId: string) => {
-    try{
-        const res = await api.post(`/api/listing-applications/me/${listingId}/submit`);
-        return res.data;
-    } catch(error){
-        apiError(error);
-    }
-}
 
-export const uploadListingMedia = async (
-  listingId: string,
-  files: File[],
-  type: "image" | "video"
-) => {
-  const formData = new FormData();
-
-  files.forEach((file) => {
-    formData.append("files", file);
-  });
-
-  const res = await api.post(
-    `/api/listing-applications/me/${listingId}/media/${type}`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
-
-  return res.data;
-};
-export const deleteListingMedia = async(listingId: string, mediaId: string, type: string) => {
+export const getAllApprovedListings = async() => {
     try{
-        const res = await api.delete(`/api/listing-applications/me/${listingId}/media/${type}/${mediaId}`);
+        const res = await api.get("/api/listings");
         return res.data;
     } catch(error){
         apiError(error);
     }
 }
-
-export const deleteListingApplication = async(listingId: string) => {
+export const searchListings = async() => {
     try{
-        const res = await api.delete(`/api/listing-applications/me/${listingId}`);
+        const res = await api.get("/api/listings/search");
         return res.data;
     } catch(error){
         apiError(error);
-    }   
-};
-export const getAllListingApplications = async() => {
-    try{
-        const res = await api.get(`/api/listing-applications`);
-        return res.data;
-    } catch(error){
-        apiError(error);
-    }   
-};
+    }
+}
 export const getListingById = async(listingId: string) => {
     try{
-        const res = await api.get(`/api/listing-applications/${listingId}`);
+        const res = await api.get(`/api/listings/${listingId}`);
         return res.data;
     } catch(error){
         apiError(error);
-    }   
-};
-export const approveListing = async(listingId: string) => {
+    }
+}
+export const getMyListings = async() => {
     try{
-        const res = await api.patch(`/api/listing-applications/${listingId}/approve`);
+        const res = await api.get(`/api/listings/agent/me`);
         return res.data;
     } catch(error){
         apiError(error);
-    }   
-};
-export const rejectListing = async(listingId: string) => {
+    }
+}
+export const updateListing = async(listingId: string) => {
     try{
-        const res = await api.patch(`/api/listing-applications/${listingId}/reject`);
+        const res = await api.put(`/api/listings/${listingId}`);
         return res.data;
     } catch(error){
         apiError(error);
-    }   
-};
+    }
+}
+export const deleteListing = async(listingId: string) => {
+    try{
+        const res = await api.delete(`/api/listings/${listingId}`);
+        return res.data;
+    } catch(error){
+        apiError(error);
+    }
+}
+export const getAllListingsForAdmin = async() => {
+    try{
+        const res = await api.get(`/api/listings/admin/all`);
+        return res.data;
+    } catch(error){
+        apiError(error);
+    }
+}
+export const featureListing = async(listingId: string) => {
+    try{
+        const res = await api.patch(`/api/listings/${listingId}/feature`);
+        return res.data;
+    } catch(error){
+        apiError(error);
+    }
+}

@@ -8,6 +8,7 @@ import { Delete, Eye, Recycle, User as UserIcon, X } from "lucide-react";
 import Image from "next/image";
 import { EditProfileSkeleton } from "../skeletons/EditProfileSkeleton";
 import { useConfirm } from "../confirm/ConfirmProvider";
+import { cloudName } from "@/utils";
 
 type User = {
   _id: string;
@@ -76,7 +77,7 @@ const EditProfilePage = () => {
       uploadData.append("upload_preset", "photography_profile_upload");
 
       const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dyliae7ie/image/upload",
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         { method: "POST", body: uploadData },
       );
       const data = await res.json();

@@ -7,11 +7,12 @@ import {
   createListingApplication,
   getMyListingApplications,
   deleteListingApplication,
-} from "@/lib/listing";
+} from "@/lib/listingApplication";
 import { Skeleton } from "@/components/ui/Skeleton";
 import Modal from "@/components/ui/Modal";
 import ListingForm from "@/components/listing-application/ListingForm";
 import Image from "next/image";
+import { cloudName } from "@/utils";
 
 const PAGE_SIZE = 6;
 
@@ -168,7 +169,7 @@ export default function CreateListingPage() {
                 <div className="w-40 h-28 bg-gray-100 rounded-xl overflow-hidden">
                   {firstImage ? (
                     <Image
-                      src={`https://res.cloudinary.com/dyliae7ie/image/upload/w_400/${firstImage}`}
+                      src={`https://res.cloudinary.com/${cloudName}/image/upload/w_400/${firstImage}`}
                       className="w-full h-full object-cover"
                       width={500}
                       height={300}

@@ -11,7 +11,7 @@ import {
   uploadListingMedia,
   deleteListingMedia,
   deleteListingApplication,
-} from "@/lib/listing";
+} from "@/lib/listingApplication";
 import { toast } from "sonner";
 import { validateListingStep } from "@/lib/validation/listingApplication";
 
@@ -28,6 +28,7 @@ export function useListingApplication(listingId?: string) {
     images: File[];
     videos: File[];
   }>({ images: [], videos: [] });
+  const [uploading, setUploading] = useState(false);
 
   const [editReturnStep, setEditReturnStep] = useState<number | null>(null);
   const [currentListingId, setCurrentListingId] = useState<string | null>(
@@ -108,30 +109,6 @@ export function useListingApplication(listingId?: string) {
     setStepLoading(true);
 
     try {
-      /* ---- Upload media if on Step 5 ---- */
-      if (currentStep === 5) {
-        if (localMedia.images.length > 0) {
-          await uploadListingMedia(
-            currentListingId,
-            localMedia.images,
-            "image",
-          );
-        }
-
-        if (localMedia.videos.length > 0) {
-          await uploadListingMedia(
-            currentListingId,
-            localMedia.videos,
-            "video",
-          );
-        }
-
-        const refreshed = await getSingleListingApplication(currentListingId);
-        setFormData(refreshed.listing);
-
-        setLocalMedia({ images: [], videos: [] });
-      }
-
       /* ---- If returning from edit jump ---- */
       if (editReturnStep) {
         await updateListingApplicationDraft(currentListingId, {
@@ -184,31 +161,58 @@ export function useListingApplication(listingId?: string) {
 
   /* ================= SUBMIT ================= */
 
-  const submit = async () => {
-    if (!currentListingId) return;
+ const submit = async () => {
+  if (!currentListingId) return;
 
-    setSubmitLoading(true);
+  setSubmitLoading(true);
 
-    try {
-      await submitListingApplication(currentListingId);
-      toast.success("Listing application submitted");
-      router.push("/create-listing/listing-application/success");
-    } catch {
-      toast.error("Failed to submit listing");
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
+  try {
+    await submitListingApplication(currentListingId);
+    toast.success("Listing application submitted");
+    router.push("/create-listing/listing-application/success");
+  } catch (error: any) {
+    toast.error(
+      error?.response?.data?.errors?.join(", ") ||
+        error?.response?.data?.message ||
+        "Failed to submit listing"
+    );
+  } finally {
+    setSubmitLoading(false);
+  }
+};
 
   /* ================= MEDIA HANDLING ================= */
 
-  const addMedia = (type: "images" | "videos", files: File[]) => {
-    setLocalMedia((prev) => ({
-      ...prev,
-      [type]: [...prev[type], ...files],
-    }));
-  };
+  // const addMedia = (type: "images" | "videos", files: File[]) => {
+  //   setLocalMedia((prev) => ({
+  //     ...prev,
+  //     [type]: [...prev[type], ...files],
+  //   }));
+  // };
 
+  const addMedia = async (type: "images" | "videos", files: File[]) => {
+  if (!currentListingId) return;
+
+  setUploading(true);
+
+  try {
+    await uploadListingMedia(
+      currentListingId,
+      files,
+      type === "images" ? "image" : "video"
+    );
+
+    const refreshed = await getSingleListingApplication(currentListingId);
+    setFormData(refreshed.listing);
+    setLocalMedia({ images: [], videos: [] });
+  } catch {
+    toast.error("Upload failed");
+  } finally {
+    setUploading(false);
+  }
+};
+
+  
   const removeLocalMedia = (index: number, type: "images" | "videos") => {
     setLocalMedia((prev) => ({
       ...prev,
@@ -267,5 +271,6 @@ export function useListingApplication(listingId?: string) {
     setCurrentStep,
     setFormData,
     setLocalMedia,
+    uploading,
   };
 }

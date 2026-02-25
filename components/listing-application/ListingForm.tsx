@@ -31,7 +31,7 @@ export default function ListingForm({ listingId }: { listingId?: string }) {
         {app.currentStep > 1 ? <button onClick={app.back}>Back</button> : <div />}
 
         {app.currentStep < steps.length ? (
-          <button onClick={app.next}>{app.stepLoading ? <Loader text="Saving..." /> : "Next"}</button>
+          <button onClick={app.next} disabled={app.uploading || app.stepLoading}>{app.stepLoading ? <Loader text="Saving..." /> : "Next"}</button>
         ) : (
           <button
             onClick={() =>

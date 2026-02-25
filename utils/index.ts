@@ -11,3 +11,6 @@ export function formatFullName(name?: string | null): string {
     )
     .join(" ");
 }
+
+
+export const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;

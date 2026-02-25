@@ -1,3 +1,6 @@
+import Loader from "@/components/ui/Loader";
+import { useListingApplication } from "@/hooks/useListingApplication";
+import { cloudName } from "@/utils";
 import Image from "next/image";
 
 export default function Step5Media({
@@ -10,6 +13,8 @@ export default function Step5Media({
   const uploadedImages = formData?.images || [];
   const localImages = localMedia?.images || [];
 
+  const { uploading } = useListingApplication();
+
   // MERGE both for display
   const allImages = [...uploadedImages, ...localImages];
 
@@ -17,6 +22,7 @@ export default function Step5Media({
   const localVideos = localMedia?.videos || [];
   const allVideos = [...uploadedVideos, ...localVideos];
 
+  console.log(cloudName)
   return (
     <div className="space-y-8">
       {/* IMAGES */}
@@ -39,29 +45,33 @@ export default function Step5Media({
                 key={isLocal ? `local-${index}` : img._id}
                 className="relative"
               >
-                <Image
-                  src={
-                    isLocal
-                      ? URL.createObjectURL(img)
-                      : `https://res.cloudinary.com/dyliae7ie/image/upload/w_400/${img.public_id}`
-                  }
-                  width={500}
-                  height={300}
-                  alt="listing"
-                  className="rounded-xl object-cover h-32 w-full"
-                />
+                {uploading ? (
+                  <Loader text="uploading image..." />
+                ) : (
+                  <Image
+                    src={
+                      isLocal
+                        ? URL.createObjectURL(img)
+                        : `https://res.cloudinary.com/${cloudName}/image/upload/w_400/${img.public_id}`
+                    }
+                    width={500}
+                    height={300}
+                    alt="listing"
+                    className="rounded-xl object-cover h-32 w-full"
+                  />
+                )}
                 <div className="flex justify-between mt-4">
                   <div />
                   <button
-                  onClick={() =>
-                    isLocal
-                      ? removeLocalMedia(index, "images")
-                      : removeUploadedMedia(img._id, "images")
-                  }
-                  className="bg-red-500 text-xs px-2 rounded"
-                >
-                  ✕ Remove
-                </button>
+                    onClick={() =>
+                      isLocal
+                        ? removeLocalMedia(index, "images")
+                        : removeUploadedMedia(img._id, "images")
+                    }
+                    className="bg-red-500 text-xs px-2 rounded"
+                  >
+                    ✕ Remove
+                  </button>
                 </div>
               </div>
             );

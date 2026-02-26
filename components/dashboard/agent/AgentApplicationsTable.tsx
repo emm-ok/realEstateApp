@@ -8,6 +8,7 @@ import {
   rejectAgentApplication,
 } from "@/lib/admin";
 import Link from "next/link";
+import AgentApplicationDetailsModal from "./AgentApplicationDetailsModal";
 
 interface AgentApplication {
   _id: string;
@@ -15,26 +16,25 @@ interface AgentApplication {
     name: string;
     email: string;
   };
-  status: "draft" | "submitted" | "approved" | "rejected";
+  status: "submitted" | "approved" | "rejected";
   createdAt: string;
 }
 
 export default function AgentApplicationsPage() {
   const [activeTab, setActiveTab] = useState<
-    "all" | "draft" | "submitted" | "approved" | "rejected"
+    "all" | "submitted" | "approved" | "rejected"
   >("all");
 
   const [applications, setApplications] = useState<AgentApplication[]>([]);
   const [reasons, setReasons] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const fetchApplications = async () => {
     try {
       setLoading(true);
       const data = await getAgentApplications();
       setApplications(data);
-    } catch {
-      toast.error("Failed to load applications");
     } finally {
       setLoading(false);
     }
@@ -43,33 +43,6 @@ export default function AgentApplicationsPage() {
   useEffect(() => {
     fetchApplications();
   }, []);
-
-  const handleApprove = async (id: string) => {
-    try {
-      await approveAgentApplication(id);
-      toast.success("Application approved");
-      fetchApplications();
-    } catch {
-      toast.error("Failed to approve application");
-    }
-  };
-
-  const handleReject = async (id: string) => {
-    const reason = reasons[id];
-
-    if (!reason?.trim()) {
-      toast.error("Please provide a rejection reason");
-      return;
-    }
-
-    try {
-      await rejectAgentApplication(id, reason);
-      toast.success("Application rejected");
-      fetchApplications();
-    } catch {
-      toast.error("Failed to reject application");
-    }
-  };
 
   const filteredApplications = applications.filter((app) =>
     activeTab === "all" ? true : app.status === activeTab,
@@ -84,7 +57,7 @@ export default function AgentApplicationsPage() {
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6">
-        {["all", "draft", "submitted", "approved", "rejected"].map((tab) => (
+        {["all","submitted", "approved", "rejected"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab as typeof activeTab)}
@@ -96,8 +69,6 @@ export default function AgentApplicationsPage() {
           >
             {tab === "all"
               ? "All"
-              : tab === "draft"
-                ? "Drafts"
                 : tab === "submitted"
                   ? "Submitted"
                   : tab === "approved"
@@ -149,9 +120,10 @@ export default function AgentApplicationsPage() {
                     {new Date(app.createdAt).toLocaleDateString()}
                   </td>
                   <td>
-                    <Link href={`/dashboard/admin/agents/agent-applications/${app._id}`} className="bg-neutral-800 text-white px-3 py-1 rounded-md">
-                      View Details
-                    </Link>
+                    <button
+                      onClick={() => setSelectedId(app._id)}
+                      className="text-blue-600 hover:underline"
+                    >View Details</button>
                   </td>
                 </tr>
               ))}
@@ -170,6 +142,11 @@ export default function AgentApplicationsPage() {
           </table>
         </div>
       )}
+      <AgentApplicationDetailsModal
+        applicationId={selectedId}
+        onClose={() => setSelectedId(null)}
+        onActionComplete={fetchApplications}
+       />
     </div>
   );
 }
@@ -193,7 +170,8 @@ export default function AgentApplicationsPage() {
 </td>; */
 }
 
-{/* <td className="px-4 py-2 flex gap-2">
+{
+  /* <td className="px-4 py-2 flex gap-2">
   {app.status === "submitted" ? (
     <>
       <button
@@ -213,4 +191,5 @@ export default function AgentApplicationsPage() {
   ) : app.status === "draft" ? (
     <span className="text-gray-500">Draft</span>
   ) : null}
-</td>; */}
+</td>; */
+}

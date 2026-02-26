@@ -96,7 +96,6 @@ export default function ChangePassword() {
     field: keyof FormValues,
     placeholder: string
   ) => {
-    const isPassword = true;
     const type = showPassword[field] ? "text" : "password";
 
     return (

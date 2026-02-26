@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "../ui/Skeleton";
+import { createApplication } from "@/lib/agentApplication";
 
 const BLOCKED = ["submitted", "under_review", "approved", "suspended"];
 
@@ -29,17 +30,17 @@ export default function StartCard() {
     try {
       if (app) {
         if (isBlocked) {
-          toast(`Application already ${status.replace("_", " ")}`);
+          toast.info(`Application already ${status.replace("_", " ")}`);
           return;
         }
         router.push(`/agent-application?app=${app._id}`);
         return;
       }
 
-      const res = await api.post("/api/agent-applications");
-      router.push(`/agent-application?app=${res.data.application._id}`);
-    } catch (error) {
-      toast(error?.response?.data?.message);
+      const res = await createApplication();
+      router.push(`/agent-application?app=${res._id}`);
+    } finally{
+      setLoading(false)
     }
   };
 

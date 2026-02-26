@@ -32,7 +32,7 @@ export default function StepDocuments({
               ...prev,
               idCard: file,
             }));
-            toast("ID card uploaded");
+            toast.success("ID card uploaded");
           }}
         />
         <div className="flex items-center justify-between">
@@ -61,7 +61,7 @@ export default function StepDocuments({
               ...prev,
               realEstateLicense: file,
             }));
-            toast("license uploaded");
+            toast.success("license uploaded");
           }}
         />
         <div className="flex items-center justify-between">
@@ -91,7 +91,7 @@ export default function StepDocuments({
               ...prev,
               selfie: file,
             }));
-            toast("Selfie uploaded");
+            toast.success("Selfie uploaded");
           }}
         />
         <div className="flex items-center justify-between">

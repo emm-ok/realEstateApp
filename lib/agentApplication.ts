@@ -3,7 +3,7 @@ import { api, apiError } from "./api";
 export const createApplication = async () => {
   try {
     const res = await api.post("/api/agent-applications");
-    return res.data;
+    return res.data.application;
   } catch (error) {
     apiError(error);
   }

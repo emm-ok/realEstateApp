@@ -1,12 +1,10 @@
 "use client";
 
-import { Kpi, NavItem, TabRenderer } from "@/components/dashboard/DashComponents";
+import { Kpi, NavItem } from "@/components/dashboard/DashComponents";
 import { CompanyTabRenderer } from "@/components/dashboard/TabRenderer";
-import Loader from "@/components/ui/Loader";
 import { navItems } from "@/config/dashboardNavItems";
 import { getCompanyApplications } from "@/lib/admin";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 interface CompanyApplication {
   _id: string;
@@ -17,7 +15,7 @@ interface CompanyApplication {
   company: {
     type: string;
   };
-  status: "draft" | "submitted" | "approved" | "rejected" | "suspended";
+  status: "submitted" | "approved" | "rejected" | "suspended";
   createdAt: string;
 }
 export default function CompaniesDashboard() {
@@ -36,10 +34,6 @@ export default function CompaniesDashboard() {
       setLoading(true);
       const data = await getCompanyApplications();
       setApplications(data);
-    } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || "Failed to fetch applications",
-      );
     } finally {
       setLoading(false);
     }

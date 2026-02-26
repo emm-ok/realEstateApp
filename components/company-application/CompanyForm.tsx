@@ -60,7 +60,7 @@ export default function CompanyForm() {
                 onConfirm: async () => {
                   try {
                     await submitCompanyApplication(app.formData);
-                    toast("Application submitted successfully.");
+                    toast.success("Application submitted successfully.");
                     router.push("/company-application/success");
                   } finally {
                     app.setSubmitLoading(false);

@@ -14,6 +14,7 @@ import {
 } from "@/lib/listingApplication";
 import { toast } from "sonner";
 import { validateListingStep } from "@/lib/validation/listingApplication";
+import { apiError } from "@/lib/api";
 
 export function useListingApplication(listingId?: string) {
   const router = useRouter();
@@ -60,8 +61,6 @@ export function useListingApplication(listingId?: string) {
         setFormData(listing);
         setCurrentStep(listing.currentStep || 1);
         setCurrentListingId(listing._id);
-      } catch {
-        toast.error("Failed to load listing application");
       } finally {
         setPageLoading(false);
       }
@@ -101,7 +100,7 @@ export function useListingApplication(listingId?: string) {
 
   const next = async () => {
     if (!currentListingId) return;
-    if(stepLoading) return;
+    if (stepLoading) return;
 
     const error = validateListingStep(currentStep, formData, localMedia);
     if (error) return toast.error(error);
@@ -129,11 +128,6 @@ export function useListingApplication(listingId?: string) {
       });
 
       setCurrentStep(nextStep);
-    } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to update listing application",
-      );
     } finally {
       setStepLoading(false);
     }
@@ -161,25 +155,19 @@ export function useListingApplication(listingId?: string) {
 
   /* ================= SUBMIT ================= */
 
- const submit = async () => {
-  if (!currentListingId) return;
+  const submit = async () => {
+    if (!currentListingId) return;
 
-  setSubmitLoading(true);
+    setSubmitLoading(true);
 
-  try {
-    await submitListingApplication(currentListingId);
-    toast.success("Listing application submitted");
-    router.push("/create-listing/listing-application/success");
-  } catch (error: any) {
-    toast.error(
-      error?.response?.data?.errors?.join(", ") ||
-        error?.response?.data?.message ||
-        "Failed to submit listing"
-    );
-  } finally {
-    setSubmitLoading(false);
-  }
-};
+    try {
+      await submitListingApplication(currentListingId);
+      toast.success("Listing application submitted");
+      router.push("/create-listing/listing-application/success");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
   /* ================= MEDIA HANDLING ================= */
 
@@ -191,28 +179,25 @@ export function useListingApplication(listingId?: string) {
   // };
 
   const addMedia = async (type: "images" | "videos", files: File[]) => {
-  if (!currentListingId) return;
+    if (!currentListingId) return;
 
-  setUploading(true);
+    setUploading(true);
 
-  try {
-    await uploadListingMedia(
-      currentListingId,
-      files,
-      type === "images" ? "image" : "video"
-    );
+    try {
+      await uploadListingMedia(
+        currentListingId,
+        files,
+        type === "images" ? "image" : "video",
+      );
 
-    const refreshed = await getSingleListingApplication(currentListingId);
-    setFormData(refreshed.listing);
-    setLocalMedia({ images: [], videos: [] });
-  } catch {
-    toast.error("Upload failed");
-  } finally {
-    setUploading(false);
-  }
-};
+      const refreshed = await getSingleListingApplication(currentListingId);
+      setFormData(refreshed.listing);
+      setLocalMedia({ images: [], videos: [] });
+    } finally {
+      setUploading(false);
+    }
+  };
 
-  
   const removeLocalMedia = (index: number, type: "images" | "videos") => {
     setLocalMedia((prev) => ({
       ...prev,
@@ -226,16 +211,12 @@ export function useListingApplication(listingId?: string) {
   ) => {
     if (!currentListingId) return;
 
-    try {
-      await deleteListingMedia(currentListingId, mediaId, type);
+    await deleteListingMedia(currentListingId, mediaId, type);
 
-      setFormData((prev: any) => ({
-        ...prev,
-        [type]: prev[type].filter((m: any) => m._id !== mediaId),
-      }));
-    } catch {
-      toast.error("Failed to remove media");
-    }
+    setFormData((prev: any) => ({
+      ...prev,
+      [type]: prev[type].filter((m: any) => m._id !== mediaId),
+    }));
   };
 
   /* ================= DELETE LISTING ================= */
@@ -243,13 +224,9 @@ export function useListingApplication(listingId?: string) {
   const deleteListing = async () => {
     if (!currentListingId) return;
 
-    try {
-      await deleteListingApplication(currentListingId);
-      toast.success("Listing deleted");
-      router.push("/listings");
-    } catch {
-      toast.error("Failed to delete listing");
-    }
+    await deleteListingApplication(currentListingId);
+    toast.success("Listing deleted");
+    router.push("/listings");
   };
 
   return {

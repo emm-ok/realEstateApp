@@ -7,7 +7,7 @@ import {
   getCompanyApplications,
   rejectCompanyApplication,
 } from "@/lib/admin";
-import Link from "next/link";
+import CompanyApplicationDetailsModal from "./CompanyApplicationDetailsModal";
 
 interface CompanyApplication {
   _id: string;
@@ -15,18 +15,21 @@ interface CompanyApplication {
     name: string;
     email: string;
   };
-  status: "draft" | "submitted" | "approved" | "rejected";
+  status: "submitted" | "approved" | "rejected";
   createdAt: string;
 }
 
 export default function CompanyApplicationsPage() {
   const [activeTab, setActiveTab] = useState<
-    "all" | "draft" | "submitted" | "approved" | "rejected"
+    "all" | "submitted" | "approved" | "rejected"
   >("all");
 
   const [applications, setApplications] = useState<CompanyApplication[]>([]);
   const [reasons, setReasons] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
+    null,
+  );
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -40,23 +43,15 @@ export default function CompanyApplicationsPage() {
   }, []);
 
   const handleApprove = async (id: string) => {
-    try {
-      await approveCompanyApplication(id);
-      toast.success("Company approved");
-      fetchApplications();
-    } catch {
-      toast.error("Failed to approve");
-    }
+    await approveCompanyApplication(id);
+    toast.success("Company approved");
+    fetchApplications();
   };
 
   const handleReject = async (id: string, reason: string) => {
-    try {
-      await rejectCompanyApplication(id, reason);
-      toast.success("Company rejected");
-      fetchApplications();
-    } catch {
-      toast.error("Failed to reject");
-    }
+    await rejectCompanyApplication(id, reason);
+    toast.success("Company rejected");
+    fetchApplications();
   };
 
   const filteredApplications = applications.filter((app) =>
@@ -83,8 +78,6 @@ export default function CompanyApplicationsPage() {
           >
             {tab === "all"
               ? "All"
-              : tab === "draft"
-                ? "Drafts"
                 : tab === "submitted"
                   ? "Submitted"
                   : tab === "approved"
@@ -134,9 +127,12 @@ export default function CompanyApplicationsPage() {
                     {new Date(app.createdAt).toLocaleDateString()}
                   </td>
                   <td>
-                    <Link href={`/dashboard/admin/companies/company-applications/${app._id}`} className="bg-neutral-800 text-white px-3 py-1 rounded-md">
+                    <button
+                      onClick={() => setSelectedCompanyId(app._id)}
+                      className="bg-neutral-800 text-white px-3 py-1 rounded-md"
+                    >
                       View Details
-                    </Link>
+                    </button>{" "}
                   </td>
                 </tr>
               ))}
@@ -155,13 +151,17 @@ export default function CompanyApplicationsPage() {
           </table>
         </div>
       )}
+      <CompanyApplicationDetailsModal
+        applicationId={selectedCompanyId}
+        onClose={() => setSelectedCompanyId(null)}
+        onActionComplete={fetchApplications}
+      />
     </div>
   );
 }
 
-
-
-{/* <td className="px-4 py-2">
+{
+  /* <td className="px-4 py-2">
   {app.status === "submitted" && (
     <input
       type="text"
@@ -176,7 +176,8 @@ export default function CompanyApplicationsPage() {
       className="rounded-full px-4 py-1 border border-gray-300"
     />
   )}
-</td>; */}
+</td>; */
+}
 
 // <>
 //   <

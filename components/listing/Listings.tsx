@@ -2,10 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getAllApprovedListings } from "@/lib/listing";
-import { toast } from "sonner";
 import FilterSection from "@/components/listing/FilterSection";
 import ListingCard from "./ListingCard";
-import Loader from "../ui/Loader";
+import ListingSkeleton from "./ListingSkeleton";
 
 export default function Listings() {
   const [listings, setListings] = useState<any[]>([]);
@@ -21,9 +20,8 @@ export default function Listings() {
   const getAllListings = async () => {
     try {
       const res = await getAllApprovedListings();
+      console.log(res.listings)
       setListings(res.listings || []);
-    } catch (error: any) {
-      toast(error?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -49,7 +47,7 @@ export default function Listings() {
 
       const matchesType =
         propertyType === "any" ||
-        listing.propertyType?.toLowerCase() === propertyType.toLowerCase();
+        listing.type?.toLowerCase() === propertyType.toLowerCase();
 
       const matchesBedroom =
         bedRoom === null || listing.bedrooms >= bedRoom;
@@ -64,10 +62,22 @@ export default function Listings() {
     });
   }, [listings, search, minPrice, maxPrice, propertyType, bedRoom]);
 
-  if (loading) return <Loader text="Loading listings..." />;
-
+  if (loading) {
   return (
     <main className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <ListingSkeleton key={index} />
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+  return (
+    <main className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
         <div className="mb-8">
           <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900">
@@ -102,11 +112,16 @@ export default function Listings() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredListings.map((listing) => (
-                  <ListingCard key={listing._id} listing={listing} />
+                  <div key={listing._id}>
+                    <ListingCard listing={listing} />
+                  </div>
                 ))}
               </div>
             )}
           </section>
+        </div>
+        <div className="flex items-center justify-center">
+          <button className="border cursor-pointer rounded-md px-6 py-2 mt-10">Load more</button>
         </div>
       </div>
     </main>

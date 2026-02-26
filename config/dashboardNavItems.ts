@@ -19,4 +19,7 @@ export const navItems = {
     { label: "Documents", value: "documents" },
     { label: "Performance", value: "performance" },
   ],
+  listing: [
+    { label: "Applications", value: "applications" },
+  ],
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
-console.log(API_URL)
 const api = axios.create({
     baseURL: API_URL,
     withCredentials: true,
@@ -24,9 +24,11 @@ const apiError = (error: unknown): never => {
         error.response?.data?.error ||
         "Something went wrong"
         
+        toast.error(message)
         throw new Error(message);
     }
     
+    toast.error("Unexpected error occured")
     throw new Error("Unexpected error occured");
 };
 

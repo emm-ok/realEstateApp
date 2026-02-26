@@ -66,7 +66,7 @@ export default function AgentForm() {
                 onConfirm: async () => {
                   try {
                     await submitApplication();
-                    toast("Application submitted successfully.");
+                    toast.success("Application submitted successfully.");
                     router.push("/become-agent/success");
                   } finally {
                     app.setSubmitLoading(false);

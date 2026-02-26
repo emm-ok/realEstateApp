@@ -91,16 +91,6 @@ export function useAgentApplication() {
     updateDraft({ ...formData, currentStep: step });
   };
 
-  // const submit = async () => {
-  //   setSubmitLoading(true);
-  //   try {
-  //     await submitApplication();
-  //     router.push("/become-agent/success");
-  //   } finally {
-  //     setSubmitLoading(false);
-  //   }
-  // };
-
   return {
     pageLoading,
     stepLoading,
@@ -118,4 +108,3 @@ export function useAgentApplication() {
   };
 }
 
-//   toast("Application submitted successfully.");

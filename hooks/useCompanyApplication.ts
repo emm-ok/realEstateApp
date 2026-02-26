@@ -136,16 +136,12 @@ export function useCompanyApplication() {
 
   /* ---------------- DELETE DOC ---------------- */
   const removeDocument = async (type: string) => {
-    try {
-      await deleteDocument(type);
-      setFormData((prev: any) => ({
-        ...prev,
-        documents: { ...prev.documents, [type]: null },
-      }));
-      setLocalDocs((prev: any) => ({ ...prev, [type]: null }));
-    } catch {
-      toast.error("Failed to remove document");
-    }
+    await deleteDocument(type);
+    setFormData((prev: any) => ({
+      ...prev,
+      documents: { ...prev.documents, [type]: null },
+    }));
+    setLocalDocs((prev: any) => ({ ...prev, [type]: null }));
   };
 
   return {

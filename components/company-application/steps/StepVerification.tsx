@@ -18,7 +18,7 @@ export default function StepVerification({ localDocs, setLocalDocs, formData }) 
           const file = e.target.files?.[0];
           if (!file) return;
           setLocalDocs((prev) => ({ ...prev, [type]: file }));
-          toast(`${label} uploaded`);
+          toast.success(`${label} uploaded`);
         }}
       />
       <div className="flex items-center justify-between">

@@ -52,7 +52,7 @@ export default function Step5Media({
                     src={
                       isLocal
                         ? URL.createObjectURL(img)
-                        : `https://res.cloudinary.com/${cloudName}/image/upload/w_400/${img.public_id}`
+                        : `https://res.cloudinary.com/${cloudName}/image/upload/${img.public_id}`
                     }
                     width={500}
                     height={300}

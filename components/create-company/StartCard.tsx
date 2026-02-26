@@ -29,7 +29,7 @@ export default function StartCard() {
     try {
       if (app) {
         if (isBlocked) {
-          toast(`Application already ${status.replace("_", " ")}`);
+          toast.info(`Application already ${status.replace("_", " ")}`);
           return;
         }
         router.push(`/company-application?app=${app._id}`);
@@ -39,8 +39,8 @@ export default function StartCard() {
       // Create new company application if none exists
       const res = await createCompanyApplication();
       router.push(`/company-application?app=${res.application._id}`);
-    } catch (error: any) {
-      toast(error?.response?.data?.message || "Failed to start application");
+    } finally{
+      setLoading(false)
     }
   };
 

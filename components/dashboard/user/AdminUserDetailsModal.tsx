@@ -52,8 +52,6 @@ export default function AdminUserDetailsDrawer({
       setLoading(true);
       const data = await getUserById(id);
       setUser(data.user as AdminUserDetails);
-    } catch {
-      toast.error("Failed to load user");
     } finally {
       setLoading(false);
     }
@@ -62,13 +60,9 @@ export default function AdminUserDetailsDrawer({
   const handleSuspendToggle = async () => {
     if (!user) return;
 
-    try {
-      await suspendUserById(user._id, !user.isSuspended);
-      toast.success("User status updated");
-      fetchUser(user._id);
-    } catch {
-      toast.error("Failed to update user status");
-    }
+    await suspendUserById(user._id, !user.isSuspended);
+    toast.success("User status updated");
+    fetchUser(user._id);
   };
 
   const initials =

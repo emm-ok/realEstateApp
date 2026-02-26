@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           console.error("Auth error:", err.response?.data);
         }
       }
-      toast(err?.response?.data?.message)
+      toast.error(err?.response?.data?.message)
 
       setUser(null);
     } finally {
@@ -65,7 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const res = await api.delete("/api/users/me");
       setUser(null)
-      toast(res.data.message)
+      toast.info(res.data.message)
       router.push("/register");
     } catch (error) {
       apiError(error);

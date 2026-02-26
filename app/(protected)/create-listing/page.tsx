@@ -13,6 +13,7 @@ import Modal from "@/components/ui/Modal";
 import ListingForm from "@/components/listing-application/ListingForm";
 import Image from "next/image";
 import { cloudName } from "@/utils";
+import { CheckCircle } from "lucide-react";
 
 const PAGE_SIZE = 6;
 
@@ -22,6 +23,7 @@ export default function CreateListingPage() {
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -32,10 +34,7 @@ export default function CreateListingPage() {
     const fetchListings = async () => {
       try {
         const res = await getMyListingApplications();
-        console.log(res);
         setListings(res.listings || []);
-      } catch {
-        toast.error("Failed to load listings");
       } finally {
         setLoading(false);
       }
@@ -67,8 +66,6 @@ export default function CreateListingPage() {
       setCreating(true);
       const res = await createListingApplication();
       setActiveListingId(res.newListingApplication._id);
-    } catch {
-      toast.error("Failed to create listing");
     } finally {
       setCreating(false);
     }
@@ -76,11 +73,12 @@ export default function CreateListingPage() {
 
   const handleDelete = async (id: string) => {
     try {
+      setDeleting(true)
       await deleteListingApplication(id);
       setListings((prev) => prev.filter((l) => l._id !== id));
       toast.success("Draft deleted");
-    } catch {
-      toast.error("Failed to delete listing");
+    } finally{
+      setDeleting(false)
     }
   };
 
@@ -169,7 +167,7 @@ export default function CreateListingPage() {
                 <div className="w-40 h-28 bg-gray-100 rounded-xl overflow-hidden">
                   {firstImage ? (
                     <Image
-                      src={`https://res.cloudinary.com/${cloudName}/image/upload/w_400/${firstImage}`}
+                      src={`https://res.cloudinary.com/${cloudName}/image/upload/${firstImage}`}
                       className="w-full h-full object-cover"
                       width={500}
                       height={300}
@@ -222,18 +220,20 @@ export default function CreateListingPage() {
                     {listing.status === "approved" && (
                       <button
                         // onClick={() => router.push(`/listings/${listing.slug}`)}
-                        className="px-4 py-2 text-sm bg-green-600 text-white rounded-xl"
+                        className="p-2 rounded-full text-sm text-green-600"
                       >
-                        View Live
+                        <CheckCircle />
                       </button>
                     )}
 
-                    <button
-                      onClick={() => handleOpen(listing._id)}
-                      className="px-4 py-2 text-sm bg-black text-white rounded-xl"
-                    >
-                      {listing.status === "draft" ? "Continue" : "View"}
-                    </button>
+                    {listing.status !== "approved" && (
+                      <button
+                        onClick={() => handleOpen(listing._id)}
+                        className="px-4 py-2 text-sm bg-black text-white rounded-xl"
+                      >
+                        {listing.status === "draft" ? "Continue" : "View"}
+                      </button>
+                    )}
 
                     {listing.status === "draft" && (
                       <button

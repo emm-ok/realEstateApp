@@ -84,7 +84,7 @@ export const deleteListingApplication = async(listingId: string) => {
 export const getAllListingApplications = async() => {
     try{
         const res = await api.get(`/api/listing-applications`);
-        return res.data;
+        return res.data.listings;
     } catch(error){
         apiError(error);
     }   
@@ -105,9 +105,11 @@ export const approveListing = async(listingId: string) => {
         apiError(error);
     }   
 };
-export const rejectListing = async(listingId: string) => {
+export const rejectListing = async(listingId: string, reason: string) => {
     try{
-        const res = await api.patch(`/api/listing-applications/${listingId}/reject`);
+        const res = await api.patch(`/api/listing-applications/${listingId}/reject`, 
+            { reason }
+        );
         return res.data;
     } catch(error){
         apiError(error);

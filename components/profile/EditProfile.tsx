@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "@/components/ui/Input";
 import { toast } from "sonner";
 import { getCurrentUser, updateCurrentUser } from "@/lib/user";
-import { Delete, Eye, Recycle, User as UserIcon, X } from "lucide-react";
+import { Eye, User as UserIcon, X } from "lucide-react";
 import Image from "next/image";
 import { EditProfileSkeleton } from "../skeletons/EditProfileSkeleton";
 import { useConfirm } from "../confirm/ConfirmProvider";
@@ -49,8 +49,6 @@ const EditProfilePage = () => {
           bio: data.bio || "",
           image: data.image || "",
         });
-      } catch {
-        toast.error("Failed to load profile");
       } finally {
         setLoading(false);
       }
@@ -83,8 +81,6 @@ const EditProfilePage = () => {
       const data = await res.json();
       setFormData((p) => ({ ...p, image: data.secure_url }));
       toast.success("Photo updated");
-    } catch {
-      toast.error("Image upload failed");
     } finally {
       setImageLoading(false);
     }
@@ -97,8 +93,6 @@ const EditProfilePage = () => {
       uploadData.delete("file");
       setFormData((p) => ({ ...p, image: "" }));
       toast.success("Photo removed");
-    } catch {
-      toast.error("Image removal failed");
     } finally {
       setImageLoading(false);
     }
@@ -127,7 +121,7 @@ const EditProfilePage = () => {
         formData.image !== user.image;
 
       if (!isDirty) {
-        toast("No changes to save");
+        toast.info("No changes to save");
         setSaving(false);
         return;
       }
@@ -135,8 +129,6 @@ const EditProfilePage = () => {
       const updated = await updateCurrentUser(formData);
       setUser(updated);
       toast.success("Profile updated");
-    } catch {
-      toast.error("Failed to update profile");
     } finally {
       setSaving(false);
     }
@@ -166,7 +158,7 @@ const EditProfilePage = () => {
             ) : (
               <div
                 className="w-24 h-24 flex items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 cursor-pointer"
-                onClick={() => toast("Upload a profile image")}
+                onClick={() => toast.info("Upload a profile image")}
               >
                 <UserIcon className="text-zinc-500" size={48} />
               </div>

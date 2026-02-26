@@ -31,10 +31,13 @@ export default function AgentsDashboard() {
   }, [activeTab]);
 
   const fetchApplications = async () => {
-    setLoading(true);
+    try{
+      setLoading(true);
     const data = await getAgentApplications();
     setApplications(data);
-    setLoading(false);
+    } finally{
+      setLoading(false);
+    }
   };
 
   return (

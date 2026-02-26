@@ -1,13 +1,6 @@
-// import CompanyApplicationsView from "./views/CompanyApplicationsView";
-// import ApprovedCompaniesView from "./views/ApprovedCompaniesView";
-// import SuspendedCompaniesView from "./views/SuspendedCompaniesView";
-// import CompanyAgentsView from "./views/CompanyAgentsView";
-// import CompanyTransactionsView from "./views/CompanyTransactionsView";
-// import CompanyDocumentsView from "./views/CompanyDocumentsView";
-// import CompanyPerformanceView from "./views/CompanyPerformanceView";
-
 import CompanyApplicationsView from "./company/CompanyApplicationView";
 import AgentApplicationsTable from "./agent/AgentApplicationsTable";
+import ListingApplicationsTable from "../listing/ListingApplicationsTable";
 export function CompanyTabRenderer({ tab, applications }) {
   switch (tab) {
     case "applications":
@@ -61,3 +54,21 @@ export function AgentTabRenderer({
       return <div>Select a tab</div>;
   }
 }
+
+export function ListingTabRenderer({
+  tab,
+  applications,
+}: {
+  tab: string;
+  applications: any[];
+}) {
+  switch (tab) {
+    case "applications":
+      return <ListingApplicationsTable />
+
+    default:
+      return <div>Select a tab</div>;
+  }
+}
+
+

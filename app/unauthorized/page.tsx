@@ -3,10 +3,15 @@
 import { useAuth } from "@/context/AuthContext";
 import { ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function UnauthorizedPage() {
   const { user } = useAuth();
+  const router = useRouter();
 
+  const handleBack = () => {
+    router.back();
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white shadow-xl rounded-2xl p-10 max-w-md w-full text-center space-y-6">
@@ -24,9 +29,9 @@ export default function UnauthorizedPage() {
           </p>
         )}
 
-        <Link href="/" className="btn-primary">
-          Go to back Home
-        </Link>
+        <button onClick={handleBack} className="btn-primary">
+          Go Back
+        </button>
       </div>
     </div>
   );

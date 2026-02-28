@@ -89,7 +89,7 @@ export const getAllListingApplications = async() => {
         apiError(error);
     }   
 };
-export const getListingById = async(listingId: string) => {
+export const getListingApplicationById = async(listingId: string) => {
     try{
         const res = await api.get(`/api/listing-applications/${listingId}`);
         return res.data;

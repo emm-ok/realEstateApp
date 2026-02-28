@@ -67,7 +67,7 @@ export default function AgentForm() {
                   try {
                     await submitApplication();
                     toast.success("Application submitted successfully.");
-                    router.push("/become-agent/success");
+                    router.push("/dashboard/user/become-agent/success");
                   } finally {
                     app.setSubmitLoading(false);
                   }

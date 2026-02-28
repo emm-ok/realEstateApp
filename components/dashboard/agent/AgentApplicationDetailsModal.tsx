@@ -162,7 +162,7 @@ export default function AgentApplicationDetailsModal({
             </div>
 
             {/* Admin Actions */}
-            {application.status === "submitted" && (
+            {application.status === "pending" && (
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <button

@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "../ui/Skeleton";
-import { createApplication } from "@/lib/agentApplication";
+import { createApplication, getMyApplication } from "@/lib/agentApplication";
+import { updateDraft } from "@/lib/companyApplication";
 
-const BLOCKED = ["submitted", "under_review", "approved", "suspended"];
+const BLOCKED = ["pending", "approved"];
 
 export default function StartCard() {
   const router = useRouter();
@@ -15,10 +16,15 @@ export default function StartCard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get("/api/agent-applications/me")
-      .then((res) => setApp(res.data.application))
-      .finally(() => setLoading(false));
+    const fetch = async () => {
+      try {
+        const res = await getMyApplication();
+        setApp(res.application);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
   }, []);
 
   // if (loading) return null;
@@ -33,29 +39,36 @@ export default function StartCard() {
           toast.info(`Application already ${status.replace("_", " ")}`);
           return;
         }
-        router.push(`/agent-application?app=${app._id}`);
+        router.push(`agent-application?app=${app._id}`);
         return;
       }
 
+      if(app.status === "rejected"){
+        await updateDraft(app._id);
+        router.push(`agent-application?app=${res._id}`);
+      }
+
       const res = await createApplication();
-      router.push(`/agent-application?app=${res._id}`);
-    } finally{
-      setLoading(false)
+      router.push(`agent-application?app=${res._id}`);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if(loading){
+  if (loading) {
     return (
-      <div className='flex flex-col justify-center items-center gap-6 mt-15 shadow p-6'>
+      <div className="flex flex-col justify-center items-center gap-6 mt-15 shadow p-6">
         <Skeleton className="w-50 h-3" />
         <Skeleton className="w-175 h-12" />
-    </div>
-    )
+      </div>
+    );
   }
 
   return (
     <div className="bg-white rounded-2xl p-8 shadow text-center space-y-4">
-      <p className="text-gray-600">{status !== "submitted" && "Ready to start your verification?"}</p>
+      <p className="text-gray-600">
+        {status !== "submitted" && "Ready to start your verification?"}
+      </p>
 
       <button
         disabled={isBlocked}
@@ -72,10 +85,9 @@ export default function StartCard() {
       >
         {!app && "Start Application"}
         {status === "draft" && "Continue Application"}
-        {status === "submitted" && "Submitted"}
-        {status === "under_review" && "Under Review"}
+        {status === "pending" && "Under Review"}
         {status === "approved" && "Approved"}
-        {status === "rejected" && "Start New Application"}
+        {status === "rejected" && "Edit Application"}
       </button>
 
       {isBlocked && (

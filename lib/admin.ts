@@ -175,3 +175,13 @@ export const rejectCompanyApplication = async (applicationId: string, reason: st
     apiError(error);
   }
 };
+
+
+export const getCompanyAgents = async(companyId: string) => {
+  try{
+    const res = await api.get(`/api/companies/${companyId}/agents`);
+    return res.data;
+  } catch(error){
+    apiError(error);
+  }
+}

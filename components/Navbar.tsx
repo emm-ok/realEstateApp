@@ -5,11 +5,8 @@ import React, { useEffect, useRef, useState } from "react";
 import logo from "../assets/logo2.png";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
-import {
-  ChevronUp,
-  ChevronDown,
-} from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
 import { useConfirm } from "./confirm/ConfirmProvider";
@@ -149,7 +146,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const { user } = useAuth();
   const confirm = useConfirm();
-  // const router = useRouter();
+  const router = useRouter();
 
   const profileRef = useRef<HTMLDivElement | null>(null);
 
@@ -164,10 +161,10 @@ const Navbar = () => {
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
@@ -326,67 +323,79 @@ const Navbar = () => {
 
       {/* Mobile Nav */}
       <AnimatePresence>
+        {/* Mobile Nav */}
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-100 bg-white overflow-hidden"
-          >
-            <div className="flex flex-col px-4 py-4 gap-2">
-              {navLinks.map((link) => (
-                <div key={link.name} className="flex flex-col">
-                  <button
-                    onClick={() =>
-                      setOpenDropDown(
-                        openDropDown === link.name ? null : link.name,
-                      )
-                    }
-                    className={`flex justify-between items-center px-3 py-2 rounded-lg text-left text-gray-700 font-medium hover:bg-gray-100 transition-colors ${
-                      isActive(link.href) ? "text-primary font-semibold border-b border-gray-400 " : ""
-                    }`}
-                  >
-                    {link.name}
-                    {link.subLinks && (
-                      <span className="ml-2">
-                        {openDropDown === link.name ? (
-                          <ChevronUp />
-                        ) : (
-                          <ChevronDown />
-                        )}
-                      </span>
-                    )}
-                  </button>
-                  {link.subLinks && openDropDown === link.name && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="flex flex-col pl-5 mt-1"
-                    >
-                      {link.subLinks.map((sub) => (
-                        <Link
-                          key={sub.name}
-                          href={sub.href}
-                          className={`block px-2 py-1 rounded-lg text-gray-700 text-sm hover:bg-gray-100 transition-colors ${
-                            isActive(sub.href)
-                              ? "text-primary font-semibold"
-                              : ""
-                          }`}
-                        >
-                          {sub.name}
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </div>
+  <div className="md:hidden border-t border-gray-100 bg-white">
+    <div className="flex flex-col px-4 py-4 gap-2">
+      {navLinks.map((link) => (
+        <div key={link.name} className="flex flex-col">
+
+          {/* Parent Row */}
+          <div className="flex justify-between items-center">
+            
+            {/* Parent Link */}
+            <Link
+              href={link.href}
+              onClick={() => {
+                setIsOpen(false);
+                setOpenDropDown(null);
+              }}
+              className={`flex-1 px-3 py-2 rounded-lg text-gray-700 font-medium ${
+                isActive(link.href) ? "text-primary font-semibold" : ""
+              }`}
+            >
+              {link.name}
+            </Link>
+
+            {/* Toggle Button */}
+            {link.subLinks && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenDropDown(
+                    openDropDown === link.name ? null : link.name
+                  );
+                }}
+                className="px-2"
+              >
+                {openDropDown === link.name ? (
+                  <ChevronUp size={18} />
+                ) : (
+                  <ChevronDown size={18} />
+                )}
+              </button>
+            )}
+          </div>
+
+          {/* Sublinks */}
+          {link.subLinks && openDropDown === link.name && (
+            <div className="flex flex-col pl-6 mt-1 space-y-1">
+              {link.subLinks.map((sub) => (
+                <Link
+                  key={sub.name}
+                  href={sub.href}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setOpenDropDown(null);
+                  }}
+                  className={`px-2 py-2 rounded-lg text-sm hover:bg-gray-100 ${
+                    isActive(sub.href)
+                      ? "text-primary font-semibold"
+                      : "text-gray-700"
+                  }`}
+                >
+                  {sub.name}
+                </Link>
               ))}
-              {user && (
-                <Logout />
-              )}
             </div>
-          </motion.div>
-        )}
+          )}
+        </div>
+      ))}
+
+      {user && <Logout />}
+    </div>
+  </div>
+)}
       </AnimatePresence>
     </nav>
   );

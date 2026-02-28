@@ -2,18 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import {
-  MapPin,
-  Bed,
-  Bath,
-  Ruler,
-  Phone,
-  Mail,
-  Bookmark,
-} from "lucide-react";
+import { MapPin, Bed, Bath, Ruler, Phone, Mail, Bookmark } from "lucide-react";
 import { useParams } from "next/navigation";
 import { getListingById } from "@/lib/listing";
 import { cloudName } from "@/utils";
+import Loader from "@/components/ui/Loader";
 
 export default function ListingDetails() {
   const [activeImage, setActiveImage] = useState(0);
@@ -24,7 +17,7 @@ export default function ListingDetails() {
     try {
       const res = await getListingById(id);
       setListing(res.listing);
-      console.log(res)
+      console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -33,9 +26,7 @@ export default function ListingDetails() {
   useEffect(() => {
     if (!listingId) return;
 
-    const id = Array.isArray(listingId)
-      ? listingId[0]
-      : listingId;
+    const id = Array.isArray(listingId) ? listingId[0] : listingId;
 
     getListingDetails(id);
   }, [listingId]);
@@ -43,24 +34,23 @@ export default function ListingDetails() {
   if (!listing) {
     return (
       <div className="h-screen flex items-center justify-center">
-        Loading...
+        <Loader text="Loading..." />
       </div>
     );
   }
 
   const images = listing.images || [];
 
-  const imageId = images[activeImage].public_id
+  const imageId = images[activeImage].public_id;
   return (
     <main className="bg-gray-50 min-h-screen">
-
       {/* IMAGE GALLERY */}
       <section className="relative w-screen h-[60vh] bg-black">
         {images.length > 0 && (
-            <Image
+          <Image
             src={`https://res.cloudinary.com/${cloudName}/image/upload/${imageId}`}
             alt="Property"
-            fill 
+            fill
             sizes="100vw"
             priority
             className="w-full h-full object-cover"
@@ -90,14 +80,10 @@ export default function ListingDetails() {
 
       {/* CONTENT */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 px-4 py-6">
-
         {/* LEFT */}
         <div className="lg:col-span-8 space-y-6">
-
           <div className="bg-white rounded-xl shadow p-6 space-y-3">
-            <h1 className="text-2xl font-semibold">
-              {listing.title}
-            </h1>
+            <h1 className="text-2xl font-semibold">{listing.title}</h1>
 
             <p className="text-gray-500 flex items-center gap-1">
               <MapPin size={16} />
@@ -127,17 +113,34 @@ export default function ListingDetails() {
               {listing.description}
             </p>
           </div>
+          
+        <div className="bg-white rounded-xl shadow p-6">
+          <h2 className="font-semibold text-lg mb-3">Amenities</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-gray-600">
+            <p>✔ Parking</p>
+            <p>✔ Swimming Pool</p>
+            <p>✔ Gym</p>
+            <p>✔ Security</p>
+            <p>✔ Balcony</p>
+            <p>✔ Power Backup</p>
+          </div>
+
+          {/* MAP */}
+          <div className="bg-white rounded-xl shadow p-6">
+            <h2 className="font-semibold text-lg mb-3">Location</h2>
+            <div className="h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+              Map integration here
+            </div>
+          </div>
         </div>
+        </div>
+
 
         {/* RIGHT */}
         <aside className="lg:col-span-4 space-y-4">
           <div className="bg-white rounded-xl shadow p-6 text-center space-y-2">
-            <p className="font-semibold">
-              {listing.agentId?.userId?.name}
-            </p>
-            <p className="text-sm text-gray-500">
-              Verified Agent
-            </p>
+            <p className="font-semibold">{listing.agentId?.userId?.name}</p>
+            <p className="text-sm text-gray-500">Verified Agent</p>
           </div>
 
           <div className="bg-white rounded-xl shadow p-6 space-y-3">

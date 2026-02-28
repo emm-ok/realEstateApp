@@ -36,6 +36,23 @@ export const changePassword = async (data: {
   }
 };
 
+export const requestPasswordReset = async(email: string) => {
+  try{
+    const res = await api.post("/api/users/password/forgot", email);
+    return res.data;
+  } catch(error){
+    apiError(error)
+  }
+}
+export const confirmPasswordResetToken = async(data: { token: string | null, newPassword: string }) => {
+  try{
+    const res = await api.post("/api/users/password/reset", data);
+    return res.data;
+  } catch(error){
+    apiError(error)
+  }
+}
+
 
 // export const deleteCurrentUser = async () => {
 //   try {

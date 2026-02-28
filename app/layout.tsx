@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "@/context/AuthContext";
 import { ConfirmProvider } from "@/components/confirm/ConfirmProvider";
 import { RouteLoader } from "@/components/ui/RouteLoader";
+import { BookmarkProvider } from "@/context/BookmarkContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,8 +51,10 @@ export default function RootLayout({
         <Toaster position="top-left" />
         <AuthProvider>
           <ConfirmProvider>
+            <BookmarkProvider>
             <RouteLoader />
                 {children}
+            </BookmarkProvider>
           </ConfirmProvider>
         </AuthProvider>
       </body>

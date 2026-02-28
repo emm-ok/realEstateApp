@@ -1,15 +1,16 @@
 import CompanyApplicationsView from "./company/CompanyApplicationView";
 import AgentApplicationsTable from "./agent/AgentApplicationsTable";
 import ListingApplicationsTable from "../listing/ListingApplicationsTable";
+import CompanyAgentsView from "./agent/CompanyAgentsView";
 export function CompanyTabRenderer({ tab, applications }) {
   switch (tab) {
     case "applications":
       // return <div>Applications View</div>
-      return <CompanyApplicationsView data={applications} />;
+      return <CompanyApplicationsView />;
 
     case "agents":
-      return <div>Company Agents View</div>
-      // return <CompanyAgentsView />;
+      // return <div>Company Agents View</div>
+      return <CompanyAgentsView />;
 
     case "transactions":
       return <div>Company Transactions View</div>

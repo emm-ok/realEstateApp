@@ -3,7 +3,6 @@ import { api } from "@/lib/api";
 import {
   uploadDocument,
   updateDraft,
-  submitApplication,
 } from "@/lib/agentApplication";
 import { validateStep } from "@/lib/validation/agentApplication.validator";
 import { toast } from "sonner";

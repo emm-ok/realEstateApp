@@ -9,7 +9,7 @@ export default function AdminDashboardLayout({ children }) {
 
   return (
       <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      <Sidebar role="superadmin" />
 
       {/* Main content */}
       <main className="p-4 flex-1 overflow-y-auto space-y-6 ml-20">

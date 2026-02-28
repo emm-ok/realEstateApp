@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   ChevronDown,
   FolderArchive,
+  LayoutDashboard,
   Settings,
   User,
   UserCheck2Icon,
@@ -55,7 +56,7 @@ const DashboardProfileDropDown = ({
           >
             <div className="w-full h-[.1px] bg-gray-300 mb-2" />
             <Link
-              href="/settings/profile"
+              href={`/dashboard/${user.role}/profile`}
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
             >
               <User size={18} />
@@ -63,7 +64,7 @@ const DashboardProfileDropDown = ({
             </Link>
             {user.role === "user" && (
               <Link
-                href="/become-agent"
+                href={`${user.role}/become-agent`}
                 className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100 rounded-full border border-gray-300"
               >
                 <UserCheck2Icon size={18} />
@@ -79,7 +80,14 @@ const DashboardProfileDropDown = ({
             </Link>
             <Help />
             <Link
-              href="/settings/profile"
+              href={`/dashboard/${user.role}`}
+              className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
+            >
+              <LayoutDashboard size={18} />
+              Dashboard
+            </Link>
+            <Link
+              href={`/dashboard/${user.role}/settings`}
               className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100"
             >
               <Settings size={18} />

@@ -12,38 +12,44 @@ import { useConfirm } from "../confirm/ConfirmProvider";
 import { logoutUser } from "@/lib/auth";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { Role } from "@/types/sidebar";
 
-export default function Sidebar() {
+interface SidebarProps {
+  role: Role;
+}
+
+export default function Sidebar({ role }: SidebarProps) {
   const [expanded, setExpanded] = useState(false);
-  const [isExpand, setIsExpand] = useState(false);
   const pathname = usePathname();
   const { user } = useAuth();
   const confirm = useConfirm();
 
-  const isActive = (href: string) => 
-    pathname === href ;
+  const navItems = SIDEBAR_NAVS[role] || [];
+
+  const isActive = (href: string) => pathname === href;
 
   return (
     <motion.aside
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => setExpanded(false)}
-      onClick={() => setExpanded(!expanded)} // mobile
+      onClick={() => setExpanded(!expanded)}
       animate={{ width: expanded ? 260 : 64 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
       className="fixed h-screen z-50 bg-white shadow-lg flex flex-col justify-between overflow-hidden"
     >
       {/* Logo */}
-      <div className="">
+      <div>
         <div
           className={`flex gap-4 items-center py-4 ${
             expanded ? "justify-between px-4" : "justify-center"
           }`}
         >
           {expanded ? (
-            <X onClick={() => setExpanded(false)}/>
+            <X onClick={() => setExpanded(false)} />
           ) : (
             <Menu onClick={() => setExpanded(true)} />
           )}
+
           {expanded && (
             <Link href="/" className="flex items-center gap-2">
               <Image
@@ -53,25 +59,16 @@ export default function Sidebar() {
                 height={40}
                 className="rounded-full shadow-sm"
               />
-              <span className=" font-bold text-primary">VeriSpace</span>
+              <span className="font-bold text-primary">VeriSpace</span>
             </Link>
           )}
-
-          {/* {!expanded && (
-            <Image
-              src={logo}
-              alt="VeriSpace logo"
-              width={36}
-              height={36}
-              className="rounded-full shadow-sm"
-            />
-          )} */}
         </div>
 
-        {/* Navigation */}
+        {/* Dynamic Navigation */}
         <nav className="flex flex-col gap-1 px-2">
-          {SIDEBAR_NAVS.superadmin.map((item) => {
+          {navItems.map((item) => {
             const Icon = item.icon;
+
             return (
               <Link
                 key={item.id}
@@ -86,12 +83,10 @@ export default function Sidebar() {
                   isActive(item.path)
                     ? "bg-gray-800 text-white"
                     : "hover:bg-gray-200"
-                }
-              `}
+                }`}
               >
                 <Icon size={18} />
-
-                {expanded && <span className="">{item.label}</span>}
+                {expanded && <span>{item.label}</span>}
               </Link>
             );
           })}
@@ -110,11 +105,10 @@ export default function Sidebar() {
               isActive(`/settings/profile`)
                 ? "bg-neutral-300 font-semibold"
                 : "hover:bg-gray-200"
-            }
-          `}
+            }`}
         >
           <Settings size={18} />
-          {expanded && <span className="">Settings</span>}
+          {expanded && <span>Settings</span>}
         </Link>
 
         {user && (
@@ -138,11 +132,10 @@ export default function Sidebar() {
                   ? "gap-3 px-3 py-3 justify-start"
                   : "justify-center py-3"
               }
-              hover:bg-gray-200
-            `}
+              hover:bg-gray-200`}
           >
             <LogOut size={18} />
-            {expanded && <span className="">Logout</span>}
+            {expanded && <span>Logout</span>}
           </button>
         )}
       </div>

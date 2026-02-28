@@ -5,8 +5,11 @@ import { toast } from "sonner";
 import {
   approveListing,
   rejectListing,
-  getAllListingApplications,
+  getListingApplicationById,
 } from "@/lib/listingApplication";
+import Image from "next/image";
+import { cloudName } from "@/utils";
+import Loader from "../ui/Loader";
 
 interface Props {
   applicationId: string | null;
@@ -28,9 +31,9 @@ export default function ListingApplicationDetailsModal({
 
     try {
       setLoading(true);
-      const all = await getAllListingApplications();
-      const found = all.find((app: any) => app._id === applicationId);
-      setApplication(found);
+      const data = await getListingApplicationById(applicationId);
+      console.log(data);
+      setApplication(data.listing);
     } finally {
       setLoading(false);
     }
@@ -61,16 +64,13 @@ export default function ListingApplicationDetailsModal({
     onActionComplete();
     fetchApplication();
   };
-
+  
   if (!applicationId) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
       {/* Modal */}
       <div className="relative bg-white dark:bg-neutral-900 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-8 z-10">
@@ -82,49 +82,57 @@ export default function ListingApplicationDetailsModal({
         </button>
 
         {loading ? (
-          <div className="text-center py-10">Loading details...</div>
+          <div className="text-center py-10"><Loader text="Loading details..." /></div>
         ) : !application ? (
-          <div className="text-center py-10">
-            Application not found.
-          </div>
+          <div className="text-center py-10">Application not found.</div>
         ) : (
           <div className="space-y-6">
-            <h1 className="text-2xl font-bold">
-              Listing Application Details
-            </h1>
+            <h1 className="text-2xl font-bold">Listing Application Details</h1>
 
             <div className="space-y-2">
               <h2 className="font-semibold">Agent Information</h2>
               <p>
-                <strong>Name:</strong>{" "}
-                {application.agentId?.userId?.name}
+                <strong>Name:</strong> {application.agentId?.userId?.name}
               </p>
               <p>
-                <strong>Email:</strong>{" "}
-                {application.agentId?.userId?.email}
+                <strong>Email:</strong> {application.agentId?.userId?.email}
               </p>
             </div>
 
             <div className="space-y-2">
               <h2 className="font-semibold">Listing Information</h2>
               <p>
-                <strong>Title:</strong>{" "}
-                {application.title || "—"}
+                <strong>Title:</strong> {application.title || "—"}
               </p>
               <p>
-                <strong>Price:</strong>{" "}
-                {application.price || "—"}
+                <strong>Price:</strong> {application.price || "—"}
               </p>
               <p>
-                <strong>Location:</strong>{" "}
-                {application.location || "—"}
+                <strong>Address:</strong> {application.location.address || "—"}
+              </p>
+              <p>
+                <strong>City:</strong> {application.location.city || "—"}
+              </p>
+              <p>
+                <strong>Country:</strong> {application.location.country || "—"}
               </p>
               <p>
                 <strong>Status:</strong>{" "}
-                <span className="capitalize">
-                  {application.status}
-                </span>
+                <span className="capitalize">{application.status}</span>
               </p>
+              <div className="flex flex-wrap gap-2">
+                {application.images.map((img, i) => (
+                    <Image
+                    key={img._id}
+                      src={`https://res.cloudinary.com/${cloudName}/image/upload/${img.public_id}`}
+                      alt="Listing Image"
+                      width={100}
+                      height={100}
+                      sizes="100vw"
+                      className="object-cover"
+                    />
+                ))}
+              </div>
             </div>
 
             {application.status === "pending" && (

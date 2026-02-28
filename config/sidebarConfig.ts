@@ -14,6 +14,10 @@ import {
   ArrowLeftRight,
   UserCircle,
   List,
+  KeyRound,
+  Receipt,
+  Bell,
+  BookmarkCheck,
 } from "lucide-react";
 
 export const SIDEBAR_NAVS = {
@@ -31,6 +35,18 @@ export const SIDEBAR_NAVS = {
       icon: Users,
     },
     {
+      id: "become-agent",
+      label: "Become Agent",
+      path: "/dashboard/user/become-agent",
+      icon: UserCircle,
+    },
+    {
+      id: "bookmarks",
+      label: "Bookmarks",
+      path: "/dashboard/user/bookmarks",
+      icon: BookmarkCheck,
+    },
+    {
       id: "messages",
       label: "Messages",
       path: "/dashboard/user/messages",
@@ -41,6 +57,30 @@ export const SIDEBAR_NAVS = {
       label: "Settings",
       path: "/dashboard/user/settings",
       icon: Settings,
+    },
+    {
+      id: "privacy",
+      label: "Privacy",
+      path: "/dashboard/user/privacy",
+      icon: KeyRound,
+    },
+    {
+      id: "security",
+      label: "Security",
+      path: "/dashboard/user/security",
+      icon: Shield,
+    },
+    {
+      id: "billings",
+      label: "Billings",
+      path: "/dashboard/user/billings",
+      icon: Receipt,
+    },
+    {
+      id: "notifications",
+      label: "Notifications",
+      path: "/dashboard/user/notifications",
+      icon: Bell,
     },
   ],
 

@@ -3,11 +3,11 @@
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/Skeleton";
+import { getMyApplication } from "@/lib/agentApplication";
 
 type ApplicationStatus =
   | "draft"
-  | "submitted"
-  | "under_review"
+  | "pending"
   | "approved"
   | "rejected";
 
@@ -22,11 +22,15 @@ export default function StatusCard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get("/api/agent-applications/me")
-      .then((res) => setApp(res.data.application))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    const fetch = async () => {
+      try {
+        const res = await getMyApplication();
+        setApp(res.application);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
   }, []);
 
   if (loading) {
@@ -43,8 +47,7 @@ export default function StatusCard() {
   if (!app) return null;
   const statusColor: Record<ApplicationStatus, string> = {
     draft: "text-yellow-600",
-    submitted: "text-blue-600",
-    under_review: "text-purple-600",
+    pending: "text-blue-600",
     approved: "text-green-600",
     rejected: "text-red-600",
   };

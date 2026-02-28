@@ -1,11 +1,15 @@
+import { useBookmarks } from "@/context/BookmarkContext";
 import { cloudName } from "@/utils";
 import { Bookmark, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 const ListingCard = ({ listing }) => {
+  const { toggleBookmark, isBookmarked } = useBookmarks();
   const imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/w_600/${listing.images?.[0]?.public_id}`;
 
+  const bookmarked = isBookmarked(listing._id);
+console.log(listing)
   return (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden border border-gray-100">
       {/* Image Section */}
@@ -20,9 +24,20 @@ const ListingCard = ({ listing }) => {
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
-        <button className="absolute top-3 right-3 bg-white/80 backdrop-blur p-2 rounded-full hover:bg-white transition">
-          <Bookmark size={18} className="text-gray-700" />
+        <button
+          onClick={() => toggleBookmark(listing._id)}
+          className="absolute top-3 right-3 bg-white/80 backdrop-blur p-2 rounded-full hover:bg-white transition"
+        >
+          <Bookmark
+            size={18}
+            className={bookmarked ? "text-black fill-black" : "text-gray-700"}
+          />
         </button>
+
+        {/* Bookmark Count */}
+        <div className="absolute bottom-3 right-3 bg-black text-white text-xs px-2 py-1 rounded-full">
+          {listing.bookmarkCount || 0} saved
+        </div>
       </div>
 
       {/* Content */}

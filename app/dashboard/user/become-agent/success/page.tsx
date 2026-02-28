@@ -3,14 +3,16 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import SuccessAnimation from "./SuccessAnimation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SuccessPage() {
+  const { user } = useAuth();
   const router = useRouter();
 
   // Auto redirect after 6s
   useEffect(() => {
     const t = setTimeout(() => {
-      router.push("/");
+      router.push(`/dashboard/${user?.role}`);
     }, 6000);
 
     return () => clearTimeout(t);

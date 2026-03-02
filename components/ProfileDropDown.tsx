@@ -38,7 +38,7 @@ const ProfileDropDown = ({
             className="absolute right-0 bg-white mt-2 shadow-lg rounded-lg"
           >
             <Link
-              href={`dashboad/${user.role}`}
+              href={`/dashboard/${user.role}`}
               className="flex gap-2 p-4 hover:bg-gray-100"
             >
               <button>

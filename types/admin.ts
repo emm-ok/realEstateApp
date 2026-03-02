@@ -1,7 +1,6 @@
 export type UserRole =
   | "user"
   | "agent"
-  | "company-admin"
   | "admin";
 
 export interface AdminUserDetails {

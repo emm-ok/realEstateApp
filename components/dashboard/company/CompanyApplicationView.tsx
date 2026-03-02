@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import {
-  approveCompanyApplication,
   getCompanyApplications,
-  rejectCompanyApplication,
 } from "@/lib/admin";
 import CompanyApplicationDetailsModal from "./CompanyApplicationDetailsModal";
 
@@ -15,17 +12,16 @@ interface CompanyApplication {
     name: string;
     email: string;
   };
-  status: "submitted" | "approved" | "rejected";
+  status: "pending" | "approved" | "rejected";
   createdAt: string;
 }
 
 export default function CompanyApplicationsPage() {
   const [activeTab, setActiveTab] = useState<
-    "all" | "submitted" | "approved" | "rejected"
+    "all" | "pending" | "approved" | "rejected"
   >("all");
 
   const [applications, setApplications] = useState<CompanyApplication[]>([]);
-  const [reasons, setReasons] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
     null,
@@ -42,18 +38,6 @@ export default function CompanyApplicationsPage() {
     fetchApplications();
   }, []);
 
-  const handleApprove = async (id: string) => {
-    await approveCompanyApplication(id);
-    toast.success("Company approved");
-    fetchApplications();
-  };
-
-  const handleReject = async (id: string, reason: string) => {
-    await rejectCompanyApplication(id, reason);
-    toast.success("Company rejected");
-    fetchApplications();
-  };
-
   const filteredApplications = applications.filter((app) =>
     activeTab === "all" ? true : app.status === activeTab,
   );
@@ -66,7 +50,7 @@ export default function CompanyApplicationsPage() {
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6">
-        {["all", "draft", "submitted", "approved", "rejected"].map((tab) => (
+        {["all", "pending", "approved", "rejected"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab as typeof activeTab)}
@@ -78,8 +62,8 @@ export default function CompanyApplicationsPage() {
           >
             {tab === "all"
               ? "All"
-                : tab === "submitted"
-                  ? "Submitted"
+                : tab === "pending"
+                  ? "Pending"
                   : tab === "approved"
                     ? "Approved"
                     : "Rejected"}
@@ -159,42 +143,3 @@ export default function CompanyApplicationsPage() {
     </div>
   );
 }
-
-{
-  /* <td className="px-4 py-2">
-  {app.status === "submitted" && (
-    <input
-      type="text"
-      value={reasons[app._id] || ""}
-      onChange={(e) =>
-        setReasons((prev) => ({
-          ...prev,
-          [app._id]: e.target.value,
-        }))
-      }
-      placeholder="Reason..."
-      className="rounded-full px-4 py-1 border border-gray-300"
-    />
-  )}
-</td>; */
-}
-
-// <>
-//   <
-//     onClick={() => handleApprove(app._id)}
-//     className="bg-emerald-600 text-white px-3 py-1 rounded-md"
-//   >
-//     Approve
-
-//   <button
-//     onClick={() =>
-//       handleReject(
-//         app._id,
-//         reasons[app._id],
-//       )
-//     }
-//     className="bg-rose-600 text-white px-3 py-1 rounded-md"
-//   >
-//     Reject
-//   </button>
-// </>

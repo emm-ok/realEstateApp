@@ -7,6 +7,7 @@ import { Search, MapPin, Home, DollarSign, Mail } from "lucide-react";
 import hero1 from "@/public/images/elite-prop-hmlP-v0vJ5o-unsplash.jpg";
 import hero2 from "@/public/images/frames-for-your-heart-2d4lAQAlbDA-unsplash.jpg";
 import hero3 from "@/public/images/francesca-tosolini-tHkJAMcO3QE-unsplash.jpg";
+import Listings from "./listing/Listings";
 
 const heroImages = [hero1, hero2, hero3];
 
@@ -81,7 +82,7 @@ export default function HomePage() {
           Featured Properties
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-6xl mx-auto">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-6xl mx-auto">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
@@ -97,7 +98,8 @@ export default function HomePage() {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
+        <Listings />
       </section>
 
       {/* HOW IT WORKS */}

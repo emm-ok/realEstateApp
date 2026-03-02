@@ -10,7 +10,7 @@ export default function SuccessPage() {
   // Auto redirect after 6s
   useEffect(() => {
     const t = setTimeout(() => {
-      router.push("/");
+      router.back();
     }, 6000);
 
     return () => clearTimeout(t);

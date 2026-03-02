@@ -31,7 +31,7 @@ interface CompanyApplicationDetails {
     description: string;
   };
   documents: Record<string, { url: string }>;
-  status: "draft" | "submitted" | "approved" | "rejected";
+  status: "pending" | "approved" | "rejected";
   createdAt: string;
 }
 
@@ -52,6 +52,7 @@ export default function CompanyApplicationDetailsModal({
       setLoading(true);
       const data = await getCompanyApplicationById(applicationId);
       setApplication(data.application);
+      console.log(data)
     } finally {
       setLoading(false);
     }
@@ -101,10 +102,10 @@ export default function CompanyApplicationDetailsModal({
       />
 
       {/* Modal */}
-      <div className="relative bg-white dark:bg-neutral-900 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-8 z-10">
+      <div className="relative bg-white dark:bg-neutral-900 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-8 z-10">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-black"
+          className="absolute top-4 right-4 text-2xl text-gray-500 hover:text-black"
         >
           ✕
         </button>
@@ -168,7 +169,7 @@ export default function CompanyApplicationDetailsModal({
             </div>
 
             {/* Admin Actions */}
-            {application.status === "submitted" && (
+            {application.status === "pending" && (
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <button

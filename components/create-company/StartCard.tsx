@@ -1,13 +1,12 @@
 "use client";
 
-import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "../ui/Skeleton";
-import { createCompanyApplication } from "@/lib/companyApplication";
+import { createCompanyApplication, getMyCompanyApplication } from "@/lib/companyApplication";
 
-const BLOCKED = ["submitted", "under_review", "approved", "suspended"];
+const BLOCKED = ["pending", "approved", "suspended"];
 
 export default function StartCard() {
   const router = useRouter();
@@ -15,12 +14,17 @@ export default function StartCard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get("/api/company-applications/me")
-      .then((res) => setApp(res.data.application))
-      .finally(() => setLoading(false));
+    const fetchApplication = async () => {
+      try {
+        const data = await getMyCompanyApplication();
+        setApp(data);
+        console.log(data)
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApplication()
   }, []);
-  
 
   const status = app?.status;
   const isBlocked = BLOCKED.includes(status);
@@ -39,8 +43,8 @@ export default function StartCard() {
       // Create new company application if none exists
       const res = await createCompanyApplication();
       router.push(`/company-application?app=${res.application._id}`);
-    } finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +60,7 @@ export default function StartCard() {
   return (
     <div className="bg-white rounded-2xl p-8 shadow text-center space-y-4">
       <p className="text-gray-600">
-        {status !== "submitted" && "Ready to start your company verification?"}
+        {status === "draft" && "Ready to start your company verification?"}
       </p>
 
       <button
@@ -70,8 +74,7 @@ export default function StartCard() {
       >
         {!app && "Start Application"}
         {status === "draft" && "Continue Application"}
-        {status === "submitted" && "Submitted"}
-        {status === "under_review" && "Under Review"}
+        {status === "pending" && "Under Review"}
         {status === "approved" && "Approved"}
         {status === "rejected" && "Start New Application"}
       </button>

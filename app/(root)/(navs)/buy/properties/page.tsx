@@ -1,9 +1,9 @@
-import Listings from '@/components/listing/Listings'
+import ListingsPage from '@/components/listing/ListingsPage'
 import React from 'react'
 
 const PropertyPage = () => {
   return (
-    <div><Listings /></div>
+    <div><ListingsPage /></div>
   )
 }
 

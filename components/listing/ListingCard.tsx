@@ -5,11 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 const ListingCard = ({ listing }) => {
-  const { toggleBookmark, isBookmarked } = useBookmarks();
+  const { toggleBookmark, isBookmarked, loading } = useBookmarks();
   const imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/w_600/${listing.images?.[0]?.public_id}`;
 
   const bookmarked = isBookmarked(listing._id);
-console.log(listing)
   return (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden border border-gray-100">
       {/* Image Section */}
@@ -26,11 +25,13 @@ console.log(listing)
 
         <button
           onClick={() => toggleBookmark(listing._id)}
+          disabled={loading}
           className="absolute top-3 right-3 bg-white/80 backdrop-blur p-2 rounded-full hover:bg-white transition"
         >
           <Bookmark
             size={18}
-            className={bookmarked ? "text-black fill-black" : "text-gray-700"}
+            fill={bookmarked ? "black" : "none"}
+            className={`transition ${bookmarked ? "text-black" : "text-gray-700"}`}
           />
         </button>
 
@@ -64,9 +65,10 @@ console.log(listing)
         </div>
 
         <div className="flex gap-3 pt-3">
-          <Link  
-            href={`/buy/properties/${listing._id}`} 
-            className="flex flex-1 items-center justify-center border border-gray-300 rounded-lg py-2 font-medium hover:bg-gray-100 transition">
+          <Link
+            href={`/buy/properties/${listing._id}`}
+            className="flex flex-1 items-center justify-center border border-gray-300 rounded-lg py-2 font-medium hover:bg-gray-100 transition"
+          >
             View Details
           </Link>
           <button className="flex flex-1 items-center justify-center gap-2 bg-black text-white rounded-lg py-2 font-medium hover:bg-gray-800 transition">

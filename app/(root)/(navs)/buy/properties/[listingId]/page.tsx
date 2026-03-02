@@ -7,11 +7,13 @@ import { useParams } from "next/navigation";
 import { getListingById } from "@/lib/listing";
 import { cloudName } from "@/utils";
 import Loader from "@/components/ui/Loader";
+import { useBookmarks } from "@/context/BookmarkContext";
 
 export default function ListingDetails() {
   const [activeImage, setActiveImage] = useState(0);
   const [listing, setListing] = useState<any>(null);
   const { listingId } = useParams();
+  const { toggleBookmark, isBookmarked, loading } = useBookmarks();
 
   const getListingDetails = async (id: string) => {
     try {
@@ -40,8 +42,9 @@ export default function ListingDetails() {
   }
 
   const images = listing.images || [];
-
   const imageId = images[activeImage].public_id;
+
+  const bookmarked = isBookmarked(listing._id);
   return (
     <main className="bg-gray-50 min-h-screen">
       {/* IMAGE GALLERY */}
@@ -73,8 +76,16 @@ export default function ListingDetails() {
           ))}
         </div>
 
-        <button className="absolute top-4 right-4 bg-white p-2 rounded-full">
-          <Bookmark />
+        <button
+          onClick={() => toggleBookmark(listing._id)}
+          disabled={loading}
+          className="absolute top-3 right-3 bg-white/80 backdrop-blur p-2 rounded-full hover:bg-white transition"
+        >
+          <Bookmark
+            size={18}
+            fill={bookmarked ? "black" : "none"}
+            className={`transition ${bookmarked ? "text-black" : "text-gray-700"}`}
+          />
         </button>
       </section>
 
@@ -113,28 +124,27 @@ export default function ListingDetails() {
               {listing.description}
             </p>
           </div>
-          
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="font-semibold text-lg mb-3">Amenities</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-gray-600">
-            <p>✔ Parking</p>
-            <p>✔ Swimming Pool</p>
-            <p>✔ Gym</p>
-            <p>✔ Security</p>
-            <p>✔ Balcony</p>
-            <p>✔ Power Backup</p>
-          </div>
 
-          {/* MAP */}
           <div className="bg-white rounded-xl shadow p-6">
-            <h2 className="font-semibold text-lg mb-3">Location</h2>
-            <div className="h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-              Map integration here
+            <h2 className="font-semibold text-lg mb-3">Amenities</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-gray-600">
+              <p>✔ Parking</p>
+              <p>✔ Swimming Pool</p>
+              <p>✔ Gym</p>
+              <p>✔ Security</p>
+              <p>✔ Balcony</p>
+              <p>✔ Power Backup</p>
+            </div>
+
+            {/* MAP */}
+            <div className="bg-white rounded-xl shadow p-6">
+              <h2 className="font-semibold text-lg mb-3">Location</h2>
+              <div className="h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+                Map integration here
+              </div>
             </div>
           </div>
         </div>
-        </div>
-
 
         {/* RIGHT */}
         <aside className="lg:col-span-4 space-y-4">

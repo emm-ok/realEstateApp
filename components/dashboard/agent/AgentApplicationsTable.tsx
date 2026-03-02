@@ -1,13 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import {
-  approveAgentApplication,
   getAgentApplications,
-  rejectAgentApplication,
 } from "@/lib/admin";
-import Link from "next/link";
 import AgentApplicationDetailsModal from "./AgentApplicationDetailsModal";
 
 interface AgentApplication {
@@ -16,13 +12,13 @@ interface AgentApplication {
     name: string;
     email: string;
   };
-  status: "submitted" | "approved" | "rejected";
+  status:  "pending" | "approved" | "rejected";
   createdAt: string;
 }
 
 export default function AgentApplicationsPage() {
   const [activeTab, setActiveTab] = useState<
-    "all" | "submitted" | "approved" | "rejected"
+    "all" | "pending" | "approved" | "rejected"
   >("all");
 
   const [applications, setApplications] = useState<AgentApplication[]>([]);
@@ -57,7 +53,7 @@ export default function AgentApplicationsPage() {
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6">
-        {["all","submitted", "approved", "rejected"].map((tab) => (
+        {["all", "pending", "approved", "rejected"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab as typeof activeTab)}
@@ -69,8 +65,8 @@ export default function AgentApplicationsPage() {
           >
             {tab === "all"
               ? "All"
-                : tab === "submitted"
-                  ? "Submitted"
+                : tab === "submitted" || tab === "pending"
+                  ? "Pending"
                   : tab === "approved"
                     ? "Approved"
                     : "Rejected"}
@@ -149,47 +145,4 @@ export default function AgentApplicationsPage() {
        />
     </div>
   );
-}
-
-{
-  /* <td className="px-4 py-2">
-  {app.status === "submitted" && (
-    <input
-      type="text"
-      value={reasons[app._id] || ""}
-      onChange={(e) =>
-        setReasons((prev) => ({
-          ...prev,
-          [app._id]: e.target.value,
-        }))
-      }
-      placeholder="Reason..."
-      className="rounded-full px-4 py-1 border border-gray-300 dark:bg-neutral-800"
-    />
-  )}
-</td>; */
-}
-
-{
-  /* <td className="px-4 py-2 flex gap-2">
-  {app.status === "submitted" ? (
-    <>
-      <button
-        onClick={() => handleApprove(app._id)}
-        className="bg-emerald-600 text-white px-3 py-1 rounded-md hover:opacity-90 transition"
-      >
-        Approve
-      </button>
-
-      <button
-        onClick={() => handleReject(app._id)}
-        className="bg-rose-600 text-white px-3 py-1 rounded-md hover:opacity-90 transition"
-      >
-        Reject
-      </button>
-    </>
-  ) : app.status === "draft" ? (
-    <span className="text-gray-500">Draft</span>
-  ) : null}
-</td>; */
 }

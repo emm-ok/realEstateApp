@@ -14,7 +14,7 @@ export const createCompanyApplication = async () => {
 export const getMyCompanyApplication = async () => {
   try {
     const res = await api.get("/api/company-applications/me");
-    return res.data;
+    return res.data.application;
   } catch (error) {
     apiError(error);
   }

@@ -31,11 +31,11 @@ export default function AgentsDashboard() {
   }, [activeTab]);
 
   const fetchApplications = async () => {
-    try{
+    try {
       setLoading(true);
-    const data = await getAgentApplications();
-    setApplications(data);
-    } finally{
+      const data = await getAgentApplications();
+      setApplications(data);
+    } finally {
       setLoading(false);
     }
   };
@@ -53,10 +53,22 @@ export default function AgentsDashboard() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
         <Kpi title="Total Applications" value={applications.length} />
-        <Kpi title="Approved Agents" value={applications.filter(a => a.status === "approved").length} />
-        <Kpi title="Total Submitted" value={applications.filter(a => a.status === "submitted").length} />
-        <Kpi title="Pending" value={applications.filter(a => a.status === "submitted").length} />
-        <Kpi title="Rejected" value={applications.filter(a => a.status === "rejected").length} />
+        <Kpi
+          title="Approved Agents"
+          value={applications.filter((a) => a.status === "approved").length}
+        />
+        <Kpi
+          title="Total Submitted"
+          value={applications.filter((a) => a.status === "submitted").length}
+        />
+        <Kpi
+          title="Pending"
+          value={applications.filter((a) => a.status === "submitted").length}
+        />
+        <Kpi
+          title="Rejected"
+          value={applications.filter((a) => a.status === "rejected").length}
+        />
         {/* <Kpi title="Suspended" value={applications.filter(a => a.status === "suspended").length} color="rose" /> */}
         <Kpi title="This Month Tx" value="$4.2M" color="indigo" />
       </div>
@@ -77,16 +89,9 @@ export default function AgentsDashboard() {
 
         {/* Content */}
         <main className="flex-1 min-h-[400px]">
-            <AgentTabRenderer
-              tab={activeTab}
-              applications={applications}
-            />
+          <AgentTabRenderer tab={activeTab} applications={applications} />
         </main>
       </div>
     </div>
   );
 }
-
-
-
-

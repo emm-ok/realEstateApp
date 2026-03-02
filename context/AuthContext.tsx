@@ -31,8 +31,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchUser = async () => {
     try {
       const res = await api.get("/api/auth/me");
+      console.log(res.data)
       setUser(res.data.user);
-    } catch (err) {
+    } catch (err: any) {
       if (axios.isAxiosError(err)) {
         if (err.response?.status !== 401) {
           console.error("Auth error:", err.response?.data);

@@ -35,7 +35,7 @@ export default function Sidebar({ role }: SidebarProps) {
       onClick={() => setExpanded(!expanded)}
       animate={{ width: expanded ? 260 : 64 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      className="fixed h-screen z-50 bg-white shadow-lg flex flex-col justify-between overflow-hidden"
+      className="fixed h-screen z-50 bg-white shadow-lg flex flex-col justify-around gap-8 overflow-hidden"
     >
       {/* Logo */}
       <div>
@@ -94,7 +94,7 @@ export default function Sidebar({ role }: SidebarProps) {
       </div>
 
       {/* Bottom Actions */}
-      <div className="flex flex-col gap-1 px-2 pb-4">
+      <div className="flex flex-col gap-1 px-2">
         <Link
           href={`/settings/profile`}
           className={`flex items-center rounded-md transition
@@ -126,7 +126,7 @@ export default function Sidebar({ role }: SidebarProps) {
                 },
               })
             }
-            className={`flex items-center rounded-md transition text-left
+            className={`flex items-center rounded-md transition
               ${
                 expanded
                   ? "gap-3 px-3 py-3 justify-start"

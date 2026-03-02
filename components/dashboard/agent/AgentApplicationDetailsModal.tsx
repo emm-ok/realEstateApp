@@ -7,6 +7,7 @@ import {
   approveAgentApplication,
   rejectAgentApplication,
 } from "@/lib/admin";
+import Loader from "@/components/ui/Loader";
 
 interface Props {
   applicationId: string | null;
@@ -30,7 +31,7 @@ interface AgentApplicationDetails {
     specialization: string[];
   };
   documents: Record<string, { url: string }>;
-  status: "draft" | "submitted" | "approved" | "rejected";
+  status: "draft" | "pending" | "approved" | "rejected";
   createdAt: string;
 }
 
@@ -109,7 +110,7 @@ export default function AgentApplicationDetailsModal({
         </button>
 
         {loading ? (
-          <div className="text-center py-10">Loading details...</div>
+          <div className="text-center py-10"><Loader text="Loading details..." /></div>
         ) : !application ? (
           <div className="text-center py-10">Application not found.</div>
         ) : (

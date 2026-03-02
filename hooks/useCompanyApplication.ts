@@ -27,8 +27,7 @@ export function useCompanyApplication() {
   useEffect(() => {
     const init = async () => {
       try {
-        const res = await getMyCompanyApplication();
-        const data = res.application;
+        const data = await getMyCompanyApplication();
 
         setFormData({
           company: data.company || {},
@@ -85,7 +84,7 @@ export function useCompanyApplication() {
         const refreshed = await getMyCompanyApplication();
         setFormData((prev: any) => ({
           ...prev,
-          documents: refreshed.application.documents,
+          documents: refreshed.documents,
         }));
       }
 

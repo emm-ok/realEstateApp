@@ -15,7 +15,7 @@ interface CompanyApplication {
   company: {
     type: string;
   };
-  status: "submitted" | "approved" | "rejected" | "suspended";
+  status: "pending" | "approved" | "rejected" | "suspended";
   createdAt: string;
 }
 export default function CompaniesDashboard() {
@@ -62,7 +62,7 @@ export default function CompaniesDashboard() {
         <Kpi title="Total Applications" value={applications.length} />
         <Kpi
           title="Pending"
-          value={applications.filter((c) => c.status === "submitted").length}
+          value={applications.filter((c) => c.status === "pending").length}
         />
         <Kpi
           title="Verified"

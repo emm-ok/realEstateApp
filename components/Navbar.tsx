@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import logo from "../assets/logo2.png";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
@@ -138,17 +138,22 @@ const otherThree = [
 ];
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
+
   const [openDropDown, setOpenDropDown] = useState<string | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
-
-  const pathname = usePathname();
   const { user } = useAuth();
   const confirm = useConfirm();
-  const router = useRouter();
-
   const profileRef = useRef<HTMLDivElement | null>(null);
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setMobileOpen(false);
+    setMobileDropdown(null);
+  }, [pathname]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -161,10 +166,10 @@ const Navbar = () => {
       }
     }
 
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -267,7 +272,7 @@ const Navbar = () => {
           <div className="flex items-center">
             {/* Mobile Hamburger */}
             <button
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => setMobileOpen((prev) => !prev)}
               className="md:hidden inline-flex items-center justify-center rounded-lg p-2 text-gray-700 hover:bg-gray-100 focus:outline-none"
             >
               <svg
@@ -277,7 +282,7 @@ const Navbar = () => {
                 strokeWidth="2"
                 viewBox="0 0 24 24"
               >
-                {isOpen ? (
+                {mobileOpen ? (
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -323,82 +328,69 @@ const Navbar = () => {
 
       {/* Mobile Nav */}
       <AnimatePresence>
-        {/* Mobile Nav */}
-        {isOpen && (
-  <div className="md:hidden border-t border-gray-100 bg-white">
-    <div className="flex flex-col px-4 py-4 gap-2">
-      {navLinks.map((link) => (
-        <div key={link.name} className="flex flex-col">
+        {mobileOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden overflow-hidden bg-white"
+          >
+            <div className="flex flex-col p-4 space-y-2">
+              {navLinks.map((link) => (
+                <div key={link.name} className="flex flex-col">
+                  {/* MAIN BUTTON */}
+                  <button
+                    onClick={() =>
+                      setMobileDropdown((prev) =>
+                        prev === link.name ? null : link.name,
+                      )
+                    }
+                    className="flex justify-between items-center py-2 font-medium text-gray-700"
+                  >
+                    {link.name}
+                    {mobileDropdown === link.name ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    )}
+                  </button>
 
-          {/* Parent Row */}
-          <div className="flex justify-between items-center">
-            
-            {/* Parent Link */}
-            <Link
-              href={link.href}
-              onClick={() => {
-                setIsOpen(false);
-                setOpenDropDown(null);
-              }}
-              className={`flex-1 px-3 py-2 rounded-lg text-gray-700 font-medium ${
-                isActive(link.href) ? "text-primary font-semibold" : ""
-              }`}
-            >
-              {link.name}
-            </Link>
-
-            {/* Toggle Button */}
-            {link.subLinks && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenDropDown(
-                    openDropDown === link.name ? null : link.name
-                  );
-                }}
-                className="px-2"
-              >
-                {openDropDown === link.name ? (
-                  <ChevronUp size={18} />
-                ) : (
-                  <ChevronDown size={18} />
-                )}
-              </button>
-            )}
-          </div>
-
-          {/* Sublinks */}
-          {link.subLinks && openDropDown === link.name && (
-            <div className="flex flex-col pl-6 mt-1 space-y-1">
-              {link.subLinks.map((sub) => (
-                <Link
-                  key={sub.name}
-                  href={sub.href}
-                  onClick={() => {
-                    setIsOpen(false);
-                    setOpenDropDown(null);
-                  }}
-                  className={`px-2 py-2 rounded-lg text-sm hover:bg-gray-100 ${
-                    isActive(sub.href)
-                      ? "text-primary font-semibold"
-                      : "text-gray-700"
-                  }`}
-                >
-                  {sub.name}
-                </Link>
+                  {/* SUB LINKS */}
+                  <AnimatePresence>
+                    {mobileDropdown === link.name && (
+                      <motion.div
+                        layout
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="pl-4 flex flex-col"
+                      >
+                        {link.subLinks.map((sub) => (
+                          <Link
+                            key={sub.name}
+                            href={sub.href}
+                            onClick={() => {
+                              setMobileOpen(false);
+                              setMobileDropdown(null);
+                            }}
+                            className="py-1 text-sm text-gray-600 hover:text-primary"
+                          >
+                            {sub.name}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ))}
-            </div>
-          )}
-        </div>
-      ))}
 
-      {user && <Logout />}
-    </div>
-  </div>
-)}
+              {user && <Logout />}
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </nav>
   );
 };
-
 export default Navbar;

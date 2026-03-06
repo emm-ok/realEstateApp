@@ -5,7 +5,6 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function AdminDashboardLayout({ children }) {
   const { user } = useAuth();
-  // if(user?.role !== "admin") return;
 
   return (
       <div className="flex h-screen bg-gray-50">

@@ -24,7 +24,7 @@ const DashboardProfileDropDown = ({
   confirm,
 }) => {
   return (
-    <div className="relative w-full z-40" ref={profileRef}>
+    <div className="relative z-40" ref={profileRef}>
       <button
         onClick={() => setProfileOpen(p => !p)}
         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition"
@@ -64,7 +64,7 @@ const DashboardProfileDropDown = ({
             </Link>
             {user.role === "user" && (
               <Link
-                href={`${user.role}/become-agent`}
+                href={`become-agent`}
                 className="flex gap-1 items-center px-4 py-2 text-xs hover:bg-gray-100 rounded-full border border-gray-300"
               >
                 <UserCheck2Icon size={18} />

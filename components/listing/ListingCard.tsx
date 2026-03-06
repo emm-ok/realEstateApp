@@ -12,7 +12,7 @@ const ListingCard = ({ listing }) => {
   return (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden border border-gray-100">
       {/* Image Section */}
-      <div className="relative h-1/2 ">
+      <div className="relative h-1/2">
         <Image
           src={imageUrl}
           alt={listing.title}
@@ -36,8 +36,8 @@ const ListingCard = ({ listing }) => {
         </button>
 
         {/* Bookmark Count */}
-        <div className="absolute bottom-3 right-3 bg-black text-white text-xs px-2 py-1 rounded-full">
-          {listing.bookmarkCount || 0} saved
+        <div className="absolute bottom-3 right-3 bg-black text-white text-xs px-2 py-1 rounded-full mt-4">
+          {listing.bookmarkCount || 0} saves
         </div>
       </div>
 

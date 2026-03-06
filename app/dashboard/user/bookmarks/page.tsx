@@ -28,7 +28,7 @@ const BookmarksPage = () => {
   if(loading) return <Loader text="Loading bookmarks..." />
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex items-center">
       {bookmarks.length === 0 ? (
         <div className="flex flex-col gap-4 justify-center items-center">
           <TriangleAlert />

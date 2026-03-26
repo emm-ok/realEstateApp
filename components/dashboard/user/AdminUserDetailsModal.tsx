@@ -60,8 +60,8 @@ export default function AdminUserDetailsDrawer({
   const handleSuspendToggle = async () => {
     if (!user) return;
 
-    await suspendUserById(user._id, !user.isSuspended);
-    toast.success("User status updated");
+    const data = await suspendUserById(user._id, !user.isSuspended);
+    toast.success(data.message);
     fetchUser(user._id);
   };
 

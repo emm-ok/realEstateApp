@@ -48,7 +48,7 @@ export function SecuritySection({
       />
 
       <div className="flex items-center justify-between">
-        <span>Suspend User</span>
+        <span>{user.isSuspended ? "Reactivate User" : "Suspend User"}</span>
         <button
           onClick={onSuspendToggle}
           className={`w-12 h-6 flex items-center rounded-full p-1 transition ${

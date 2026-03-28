@@ -36,6 +36,15 @@ export const suspendUserById = async (id: string, suspend: boolean) => {
   }
 };
 
+export const updateUserRole = async (id: string, role: string) => {
+  try {
+    const res = await api.patch(`/api/users/${id}/role`, { role });
+    return res.data;
+  } catch (error) {
+    apiError(error);
+  }
+};
+
 export const getAllCompanies = async () => {
   try {
     const res = await api.get(`/api/companies`);

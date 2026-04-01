@@ -39,8 +39,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           console.error("Auth error:", err.response?.data);
         }
       }
-      toast.error(err?.response?.data?.message)
-
       setUser(null);
     } finally {
       setLoading(false);

@@ -148,8 +148,8 @@ const EditProfilePage = () => {
                 <Image
                   src={formData.image}
                   alt="Profile"
-                  width={60}
-                  height={60}
+                  width={500}
+                  height={500}
                   loading="eager"
                   className="w-full h-full rounded-full object-cover border dark:border-zinc-700 cursor-pointer"
                   onClick={() => setPreviewImage(formData.image)}

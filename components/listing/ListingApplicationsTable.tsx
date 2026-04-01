@@ -5,6 +5,7 @@ import {
 } from "@/lib/listingApplication";
 import React, { useEffect, useState } from "react";
 import ListingApplicationDetailsModal from "./ListingApplicationDetailsModal";
+import Loader from "../ui/Loader";
 
 const ListingApplicationsTable = () => {
   const [activeTab, setActiveTab] = useState<
@@ -49,7 +50,7 @@ const ListingApplicationsTable = () => {
             className={`px-4 py-2 rounded-lg font-medium transition ${
               activeTab === tab
                 ? "bg-primary text-white shadow"
-                : "bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-gray-300"
+                : "bg-gray-100"
             }`}
           >
             {tab === "all"
@@ -66,13 +67,13 @@ const ListingApplicationsTable = () => {
       {/* Table */}
       {loading ? (
         <div className="text-center py-20">
-          Loading listing applications...
+          <Loader /> Loading listing applications...
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-200 dark:bg-neutral-800">
+              <tr className="bg-gray-200">
                 <th className="px-4 py-2">Agent Name</th>
                 <th className="px-4 py-2">Agent Email</th>
                 <th className="px-4 py-2">Status</th>
@@ -85,7 +86,7 @@ const ListingApplicationsTable = () => {
               {filteredApplications.map((app) => (
                 <tr
                   key={app._id}
-                  className="border-b border-gray-200 dark:border-neutral-700"
+                  className=""
                 >
                   <td className="px-4 py-2">
                     {app.agentId?.userId?.name || "—"}

@@ -60,7 +60,7 @@ export default function AgentApplicationsPage() {
             className={`px-4 py-2 rounded-lg font-medium transition ${
               activeTab === tab
                 ? "bg-primary text-white shadow"
-                : "bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-gray-300"
+                : "bg-gray-100"
             }`}
           >
             {tab === "all"
@@ -79,9 +79,9 @@ export default function AgentApplicationsPage() {
         <div className="text-center py-20">Loading agent applications...</div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left">
             <thead>
-              <tr className="bg-gray-200 dark:bg-neutral-800">
+              <tr className="bg-gray-200">
                 <th className="px-4 py-2">Name</th>
                 <th className="px-4 py-2">Email</th>
                 <th className="px-4 py-2">Status</th>
@@ -94,7 +94,7 @@ export default function AgentApplicationsPage() {
               {filteredApplications.map((app) => (
                 <tr
                   key={app._id}
-                  className="border-b border-gray-200 dark:border-neutral-700"
+                  className=""
                 >
                   <td className="px-4 py-2">{app.userId?.name || "—"}</td>
                   <td className="px-4 py-2">{app.userId?.email || "—"}</td>

@@ -98,6 +98,12 @@ export const SIDEBAR_NAVS = {
       icon: Users,
     },
     {
+      id: "create-listing",
+      label: "Create Listing",
+      path: "/dashboard/agent/create-listing",
+      icon: Users,
+    },
+    {
       id: "deals",
       label: "Deals",
       path: "/dashboard/agent/deals",
